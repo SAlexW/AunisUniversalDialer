@@ -49,6 +49,9 @@ function download()
 end
 
 --[[
+
+https://computercraft.ru/topic/2110-zagruzka-programm-s-github/
+
 local args, opts = shell.parse(...)
 
 
