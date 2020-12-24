@@ -35,7 +35,6 @@ local term = require("term")
 local serial = require("serialization")
 local math = require("math")
 local string = require("string")
-
 --libraries--
 
 --global variables--
@@ -332,6 +331,10 @@ gpu.setForeground(15, true)
  gpu.set(1,25, "Name too long")
  clsmsgtimerid = event.timer(5, clsmsg)
  goto namechoose
+ elseif msgt == "Base" or msgt == "Base " or msgt == "Base  " or msgt == "Base   " or msgt == "Base    " then
+ gpu.set(1,25, "This name is reserved. Please enter another name")
+ clsmsgtimerid = event.timer(5, clsmsg)
+ goto namechoose
  end
 gpu.setBackground(15, true)
 gpu.setForeground(0, true)
@@ -570,6 +573,10 @@ local _, _, xmain, ymain = event.pull("touch")
    gpu.setForeground(15, true)
     if mst:len() > 8 then
     gpu.set(1,25, "Name too long")
+    clsmsgtimerid = event.timer(5, clsmsgb)
+    goto namebookchoose
+    elseif msgt == "Base" or msgt == "Base " or msgt == "Base  " or msgt == "Base   " or msgt == "Base    " then
+    gpu.set(1,25, "This name is reserved. Please enter another name.")
     clsmsgtimerid = event.timer(5, clsmsgb)
     goto namebookchoose
     end
@@ -991,7 +998,6 @@ local ignor = true
 while ignor do
 ignor = event.ignore("modem_message", maingateupdate)
 end
-local gateadd
 os.sleep(0.2)
 gpu.fill(29, 10, 11, 1, "　")
 gpu.setForeground(8, true)
@@ -1007,7 +1013,51 @@ if (tun and recev == tunnel.address) then
  elseif (msg == "main") then 
  event.listen("modem_message", maingateupdate)
  local ybase = 0 
- gateadd = serial.unserialize(gateaddress)
+ local gateadd = serial.unserialize(gateaddress)
+ local mainbook
+ local addtype
+ local mainadd = {}
+  for k = 1, 2 do
+   if k == 1 then
+   mainbook = io.open("bookMW.ff", "r")
+   addtype = "MILKYWAY"
+   else
+   mainbook = io.open("bookUN.ff", "r")
+   addtype = "UNIVERSE"
+   end
+  local num = 0
+   for l in book:lines() do
+   num = num+1
+   if (l == "") then goto mainbookend end
+   mainadd[num] = {}
+   mainadd[num][l:sub(1, l:find("=")-2)] = {}
+    for t in string.gmatch(l:sub(l:find("=")+2), "([^,]+)") do
+    table.insert(mainadd[num][l:sub(1, l:find("=")-2)], t)
+    end
+   end
+  ::mainbookend::
+   for key, val in pairs(mainadd[1]) do
+    if (key ~= "Base" and val ~= gateadd[addtype]) then --<--!!
+     for i = #mainadd, 1, -1 do
+     mainadd[i+1] = {}
+     mainadd[i+1] = mainadd[i]
+     end
+    mainadd[1] = {}
+    mainadd[1]["Base"] = gateadd[addtype] --<--!!
+    end
+   end
+   if (k == 1) then
+   book = io.open("bookMW.ff", "w")
+   else
+   book = io.open("bookUN.ff", "w")
+   end
+   for _, v in ipairs(mainadd) do
+    for key, val in pairs(v) do
+    book:write(tostring(key), " = ", string.format("%s", string.gsub(string.gsub(string.gsub(serial.serialize(val), "\"", ""), "{", ""), "}", "")), "\n")
+    end
+   end
+	 book:close()
+  end
  local eneper = tostring(tonumber(energy) *100 / tonumber(maxenergy))
  local dialedadd = {}
  local t = 1
