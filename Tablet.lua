@@ -63,6 +63,7 @@ local tunnel
 local sortmode
 if (tun) then 
  tunnel = comp.tunnel
+ tunnel.setWakeMessage("link", true)
  dofile("GI.ff")
 end
 --global variables--
