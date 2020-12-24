@@ -13,53 +13,45 @@ local gpu = component.gpu
 local wwweb = nil
 local webconnect = component.isAvailable("internet")
 if webconnect then wwweb = require("internet") else io.stderr:write("No internet connection. Please install an\nInternet Card\n") os.exit(false) end
+local type = false
 
-local url = "https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer"
+local url = "https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main"
+
+function dircreate()
+ if not fsys.isDirectory("/arud") then
+  local sccs, msg = fsys.makeDirectory("/arud")
+  if sccs == nil then
+   io.stderr:write("ERROR: Failed to create directory")
+   os.exit(false)
+  end
+ end
+end
+
+function selecttype()
+ print("Please select the device type for the program you are installing:")
+ print("1 - Tablet, 2 - Computer/Server, Other - Cancel installation")
+ local input = io.read()
+ if (input == "1" or choose == "2") then
+  if input == "1" then type = true else type = false end
+ else
+ io.stderr:write("Instalation canceled")
+ os.exit(false)
+ end
+end
+
+function download()
+ print("Downloading files...")
+ if type then
+  
+ else
+    local file = 
+ end
+end
 
 --[[
 local args, opts = shell.parse(...)
 
 
-
-if opts.d then
-  print([[
-┌───────────────────────────┐
-│Installer Set to Dev Branch│
-└───────────────────────────┘]])
-  BranchURL = "https://raw.githubusercontent.com/ShicKla/AuspexGateSystems/dev"
-else
-  BranchURL = "https://raw.githubusercontent.com/ShicKla/AuspexGateSystems/release"
-end
-ReleaseVersionsFile = "/ags/releaseVersions.ff"
-ReleaseVersions = nil
-
-function createInstallDirectory() -- Creates `/ags` directory, if it doesn't already exist
-  if not filesystem.isDirectory("/ags") then
-    print("Creating \"/ags\" directory")
-    local success, msg = filesystem.makeDirectory("/ags")
-    if success == nil then
-      io.stderr:write("Failed to created \"/ags\" directory, "..msg)
-      os.exit(false)
-    end
-  end
-end
-
-function checkForExistingInstall() -- Checks for existing install, and prompt user if one is found
-  if filesystem.exists("/ags/AuspexGateSystems.lua") then
-    print([[
-┌────────────────────────────────────────────────┐
-│An existing installation of Auspex Gate Systems │
-│was found. Would you like to reinstall?         │
-└────────────────────────────────────────────────┘]])
-    term.setCursorBlink(true)
-    io.write(" Yes/No: ")
-    local userInput = io.read("*l")
-    if (userInput:lower()):sub(1,1) ~= "y" then
-      print(" Canceling Installation")
-      os.exit(true)
-    end
-  end
-end
 
 function downloadNeededFiles()
   print("Downloading Files, Please Wait...")
