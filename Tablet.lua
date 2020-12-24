@@ -287,6 +287,7 @@ end
 
 --add address to address book--
 function abook()
+local book
 local rewcheck = true
 local addbook = {}
 local msgt = ""
@@ -911,7 +912,7 @@ gpu.set(73, 21, "[ DIAL ]")
       if (adcheck) then
       add[#add+1] = unf[y+math.floor((x-61)/10)*18]
       gpu.set(math.floor((x-61)/10)*10+61, y, tostring(#add))
-      gpu.setForeground(7, true)
+      gpu.setForeground(1, true)
        for i = 1, 10 do
        local cha = gpu.get((math.floor((x-61)/10)*10+60+i), y)
        gpu.set((math.floor((x-61)/10)*10+60+i), y, cha)
@@ -1018,37 +1019,65 @@ if (tun and recev == tunnel.address) then
  local ybase = 0 
  local gateadd = serial.unserialize(gateaddress)
  local mainbook
- local addtype
+ local addtype = ""
  local mainadd = {}
+ local num = 1
+ 
   for k = 1, 2 do
-   if k == 1 then
+  num = 1
+   if (k == 1) then
    mainbook = io.open("bookMW.ff", "r")
    addtype = "MILKYWAY"
    else
    mainbook = io.open("bookUN.ff", "r")
    addtype = "UNIVERSE"
    end
-  local num = 0
-   for l in book:lines() do
-   num = num+1
-   if (l == "") then goto mainbookend end
+  if (mainbook:seek("end") == 0) then mainadd[1] = {"#"} else
+  mainbook:seek("set")
+  for l in mainbook:lines() do
+    if (l == "") then goto mainbookend end
    mainadd[num] = {}
    mainadd[num][l:sub(1, l:find("=")-2)] = {}
     for t in string.gmatch(l:sub(l:find("=")+2), "([^,]+)") do
     table.insert(mainadd[num][l:sub(1, l:find("=")-2)], t)
     end
+	num = num+1
    end
   ::mainbookend::
-   for key, val in pairs(mainadd[1]) do
+  end
+  local mainaddtimed = mainadd[1]
+   if (table.concat(mainadd[1]) == "#") then
+   mainadd[1] = {}
+   mainadd[1].Base = {}
+   local basegateadd = gateadd[addtype]
+    for ii = 1, 8 do
+    mainadd[1]["Base"][ii] = basegateadd[ii]
+    end
+	if (addtype == "MILKYWAY") then
+      table.insert(mainadd[1]["Base"], "Point of Origin")
+      elseif (addtype == "UNIVERSE") then
+      table.insert(mainadd[1]["Base"], "Glyph 17")
+      end
+   else
+    for key, val in pairs(mainaddtimed) do
     local valshort = val
-    valshort[#valshort] = nil
-    if (key ~= "Base" and valshort ~= gateadd[addtype]) then
-     for i = #mainadd, 1, -1 do
-     mainadd[i+1] = {}
-     mainadd[i+1] = mainadd[i]
+    if (key ~= "Base") then
+	local size = #mainadd
+	 --if val ~= {} then
+      for i = 1, size do
+      mainadd[size+2-i] = {}
+	   for kk, vv in pairs(mainadd[size-i+1]) do
+	   mainadd[size-i+2][kk] = vv
+	   end
+	 end
+	  --else mainadd = {}
      end
     mainadd[1] = {}
-    mainadd[1]["Base"] = gateadd[addtype]
+	mainadd[1].Base = {}
+	local basegateadd = gateadd[addtype]
+	for ii = 1, 8 do
+    mainadd[1]["Base"][ii] = basegateadd[ii]
+	end
       if (addtype == "MILKYWAY") then
       table.insert(mainadd[1]["Base"], "Point of Origin")
       elseif (addtype == "UNIVERSE") then
@@ -1056,18 +1085,19 @@ if (tun and recev == tunnel.address) then
       end
     end
    end
-   if (k == 1) then
-   book = io.open("bookMW.ff", "w")
-   else
-   book = io.open("bookUN.ff", "w")
-   end
+    if (addtype == "MILKYWAY") then
+    mainbook = io.open("bookMW.ff", "w")
+    elseif (addtype == "UNIVERSE") then
+    mainbook = io.open("bookUN.ff", "w")
+    end
    for _, v in ipairs(mainadd) do
     for key, val in pairs(v) do
-    book:write(tostring(key), " = ", string.format("%s", string.gsub(string.gsub(string.gsub(serial.serialize(val), "\"", ""), "{", ""), "}", "")), "\n")
+    mainbook:write(tostring(key), " = ", string.format("%s", string.gsub(string.gsub(string.gsub(serial.serialize(val), "\"", ""), "{", ""), "}", "")), "\n")
     end
    end
-	 book:close()
+	 mainbook:close()
   end
+  
  local eneper = tostring(tonumber(energy) *100 / tonumber(maxenergy))
  local dialedadd = {}
  local t = 1
