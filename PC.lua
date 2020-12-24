@@ -206,8 +206,9 @@ if (msg == "link") then
    while (gate.getGateStatus() ~= "idle") do
    os.sleep(0)
    end
-  if (gate.getGateType() == "UNIVERSE") then os.sleep(0.5) end
+  if (gate.getGateType() == "UNIVERSE") then os.sleep(0.16) end
   event.ignore("modem_message", diseng)
+  gate.engageGate()
   tunnel.send("dialed")
   event.listen("modem_message", main)
   end
