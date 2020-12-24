@@ -519,8 +519,10 @@ num = 0
   end
     if(mode == "work") then
 	 if (addbook[i] ~= nil) then
+     if not (i == 1 and tun) then
      gpu.set(74,4*(i-shown)+1,"RENAME")
      gpu.set(74,4*(i-shown)+3,"DELETE")
+     end
 	 else
      gpu.fill(74,4*(i-shown)+1, 7, 3, " ")
 	 end 
@@ -560,7 +562,7 @@ local _, _, xmain, ymain = event.pull("touch")
   end
  elseif (xmain > 73 and ymain > 4 and ymain < 20) then
   if (mode == "work") then
-   if (math.fmod(ymain-5, 4) == 0 and addbook[(ymain-1)/4+shown] ~= nil) then
+   if (math.fmod(ymain-5, 4) == 0 and addbook[(ymain-1)/4+shown] ~= nil and not((ymain-1)/4+shown == 1 and tun)) then
    gpu.setBackground(0, true)
    gpu.setForeground(15, true)
    ::namebookchoose::
@@ -611,7 +613,7 @@ local _, _, xmain, ymain = event.pull("touch")
     end
 	book:close()
 	goto bookworkloop
-  elseif(math.fmod(ymain-7, 4) == 0 and addbook[(ymain-3)/4+shown] ~= nil) then
+  elseif(math.fmod(ymain-7, 4) == 0 and addbook[(ymain-3)/4+shown] ~= nil and not((ymain-3)/4+shown == 1 and tun)) then
    gpu.setBackground(0, true)
    gpu.setForeground(15, true)
    gpu.fill(1,24,80,2," ")
@@ -1037,13 +1039,20 @@ if (tun and recev == tunnel.address) then
    end
   ::mainbookend::
    for key, val in pairs(mainadd[1]) do
-    if (key ~= "Base" and val ~= gateadd[addtype]) then --<--!!
+    local valshort = val
+    valshort[#valshort] = nil
+    if (key ~= "Base" and valshort ~= gateadd[addtype]) then
      for i = #mainadd, 1, -1 do
      mainadd[i+1] = {}
      mainadd[i+1] = mainadd[i]
      end
     mainadd[1] = {}
-    mainadd[1]["Base"] = gateadd[addtype] --<--!!
+    mainadd[1]["Base"] = gateadd[addtype]
+      if (addtype == "MILKYWAY") then
+      table.insert(mainadd[1]["Base"], "Point of Origin")
+      elseif (addtype == "UNIVERSE") then
+      table.insert(mainadd[1]["Base"], "Glyph 17")
+      end
     end
    end
    if (k == 1) then
