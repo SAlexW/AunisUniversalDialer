@@ -6,7 +6,7 @@ local gpu
 if (comp.isAvailable("gpu")) then
  gpu = comp.gpu
  if(gpu.maxDepth() < 4) then
- gpu.set(1,10,"Please, install Graphics Card tier 2 or 3") 
+ gpu.set(1,10,"Please, install Graphics Card tier 2 or higher") 
  pc.beep(40, 1)
  pc.beep(40, 1)
  os.sleep(2)
