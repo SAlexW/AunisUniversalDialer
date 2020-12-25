@@ -876,35 +876,35 @@ gpu.set(73, 21, "[ DIAL ]")
   _, _, x, y = event.pull("touch")
    if (x>72 and y==21) then
    abortm = false
-   pc.beep(500, 0.25)
-   pc.beep(1000, 0.25)
    dial()
+   pc.beep(500, 0.1)
+   pc.beep(1000, 0.1)
    elseif (x>72 and y==22) then
-   pc.beep(250, 0.5)
    abort(_, _, x, y)
+   pc.beep(250, 0.5)
    elseif (x>72 and y==24) then
     if ((add[#add] == "Point of Origin" or add[#add] == "Glyph 17") and #add > 6) then
     abook()
     else
-    pc.beep(150, 0.1)
-    pc.beep(150, 0.1)
     gpu.set(1,25, "Wrong address")
+    pc.beep(150, 0.1)
+    pc.beep(150, 0.1)
     clsmsgtimerid = event.timer(5, clsmsg)
     end
    elseif (x>72 and y==23) then
     if (gdialed) then
     sendmsg()
     else
-    pc.beep(150, 0.25)
     gpu.set(1,25,"Not dialed")
+    pc.beep(150, 0.25)
     clsmsgtimerid = event.timer(5, clsmsg)
     end
    elseif (x>72 and y==25) then
    event.ignore("touch", abort)
    term.clear()
    event.cancel(clsmsgtimerid)
-   pc.beep(250, 0.25)
    event.listen("modem_message", maingateupdate)
+   pc.beep(250, 0.25)
    mainscreen()
    else
     if (stype == "MILKYWAY") then
