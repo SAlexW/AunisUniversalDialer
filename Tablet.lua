@@ -667,7 +667,7 @@ local _, _, xmain, ymain = event.pull("touch")
   else
    if (math.fmod(ymain-6, 4) == 0 and addbook[(ymain-2)/4+shown] ~= nil) then
    pc.beep(500, 0.25)
-   pc.beep(500, 0.25)
+   pc.beep(600, 0.25)
    if (gdialed ~= true) then
 	for _, val in pairs(addbook[(ymain-2)/4+shown]) do
 	add = val
