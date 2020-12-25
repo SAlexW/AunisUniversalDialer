@@ -147,7 +147,7 @@ if (msg == "link") then
  gate.disengageGate()
  gate.engageGate()
     tunidle = true
-   disen - true
+   event.listen("modem_message", diseng)
    event.listen("stargate_incoming_wormhole", tunmessage)
    event.listen("stargate_open", tunmessage)
    event.listen("stargate_wormhole_closed_fully", tunmessage)
@@ -235,7 +235,6 @@ elseif (msg == "abort") then
 gate.disengageGate()
 gate.engageGate()
    tunidle = true
-   disen = true
    event.listen("stargate_incoming_wormhole", tunmessage)
    event.listen("stargate_open", tunmessage)
    event.listen("stargate_wormhole_closed_fully", tunmessage)
@@ -248,6 +247,7 @@ gate.engageGate()
 os.sleep(0.1)
 elseif (msg == "add") then
 tunidle = false
+event.listen("modem_message", diseng)
 event.ignore("stargate_incoming_wormhole", tunmessage)
 event.ignore("stargate_open", tunmessage)
 event.ignore("stargate_wormhole_closed_fully", tunmessage)
