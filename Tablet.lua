@@ -269,6 +269,7 @@ function abort(_, _, x, y)
 end
 
 function abortbook(_, _, x, y)
+event.cancel(clsmsgtimerid)
 if (x > 59 and x < 73 and y == 1) then
  pc.beep(250, 0.5)
  abortm = true
@@ -288,7 +289,7 @@ if (x > 59 and x < 73 and y == 1) then
   gpu.set(1, 25, "abort dial")
   gdialed = false
   end
- event.timer(5, addressbookwork)
+ clsmsgtimerid = event.timer(5, addressbookwork)
  os.sleep(0.1)
 end
 --abort dialing / disengagge gate--
