@@ -1050,6 +1050,7 @@ if (tun and recev == tunnel.address) then
  local num = 1
   for k = 1, 2 do
   num = 1
+  mainadd = {}
    if (k == 1) then
    mainbook = io.open("bookMW.ff", "r")
    addtype = "MILKYWAY"
