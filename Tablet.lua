@@ -909,7 +909,6 @@ gpu.set(73, 21, "[ DIAL ]")
    else
     if (stype == "MILKYWAY") then
      if (x>46 and y < 20 and #add < 9) then
-     pc.beep(300, 0.25)
      adcheck = true
       for _, val in ipairs(add) do
        if (val == mwf[y+math.floor((x-47)/17)*19]) then adcheck = false end
@@ -924,10 +923,10 @@ gpu.set(73, 21, "[ DIAL ]")
        end
       gpu.setForeground(0, true)
       end
+     pc.beep(300, 0.25)
      end
     elseif (stype == "UNIVERSE") then
      if (x>60 and y < 19 and #add < 9) then
-     pc.beep(300, 0.25)
      adcheck = true
       for _, val in ipairs(add) do
        if (val == unf[y+math.floor((x-61)/10)*18]) then adcheck = false end
@@ -942,6 +941,7 @@ gpu.set(73, 21, "[ DIAL ]")
        end
       gpu.setForeground(0, true)
       end
+     pc.beep(300, 0.25)
      end
    end
    	--goto mainloop
