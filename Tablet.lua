@@ -217,6 +217,7 @@ end
 --abort dialing / disengagge gate--
 function abort(_, _, x, y)
  if (x>72 and y==22) then
+ pc.beep(250, 0.5)
  abortm = true
  event.ignore("touch", abort)
  if (card == "modem") then
@@ -263,6 +264,7 @@ end
 
 function abortbook(_, _, x, y)
 if (x > 59 and x < 73 and y == 1) then
+ pc.beep(250, 0.5)
  abortm = true
  event.ignore("touch", abortbook)
  if (card == "modem") then
@@ -658,6 +660,8 @@ local _, _, xmain, ymain = event.pull("touch")
    end
   else
    if (math.fmod(ymain-6, 4) == 0 and addbook[(ymain-2)/4+shown] ~= nil) then
+   pc.beep(500, 0.5)
+   pc.beep(500, 0.5)
    if (gdialed ~= true) then
 	for _, val in pairs(addbook[(ymain-2)/4+shown]) do
 	add = val
@@ -754,9 +758,13 @@ os.sleep(0.1)
    gpu.setForeground(4, true)
    local diad
    if (card == "modem") then _, _, _, _, _, diad = event.pull("modem_message", modem.address) elseif (card == "tunnel") then _, _, _, _, _, diad = event.pull("modem_message", tunnel.address) end
+   pc.beep(400, 0.1)
    os.sleep(0.01)
    if (diad == "abort") then abortm = true
+   pc.beep(250, 0.5)
    elseif (diad == "dialed") then goto continue
+   pc.beep(600, 0.5)
+   pc.beep(600, 0.5)
    else
    diads = serial.unserialize(diad)
     for i, vali in ipairs(add) do
@@ -844,11 +852,11 @@ gpu.set(73, 21, "[ DIAL ]")
     if (stype == "MILKYWAY") then
     gpu.setForeground(12, true)
     elseif (stype == "UNIVERSE") then
-	gpu.setForeground(7, true)
+    gpu.setForeground(7, true)
     end
    end
     for line in GlyphImages[add[i]]:gmatch("[^\r\n]+") do
-	 if (stype == "MILKYWAY") then
+     if (stype == "MILKYWAY") then
      gpu.set((math.fmod(i-1, 3)*15)+1, math.floor((i-1)/3)*8+y+1, line)
      elseif (stype == "UNIVERSE") then
      gpu.set((math.fmod(i-1, 9)*6)+3, 4+y, line)
@@ -862,13 +870,18 @@ gpu.set(73, 21, "[ DIAL ]")
   _, _, x, y = event.pull("touch")
    if (x>72 and y==21) then
    abortm = false
+   pc.beep(500, 0.25)
+   pc.beep(1000, 0.25)
    dial()
    elseif (x>72 and y==22) then
+   pc.beep(250, 0.5)
    abort(_, _, x, y)
    elseif (x>72 and y==24) then
     if ((add[#add] == "Point of Origin" or add[#add] == "Glyph 17") and #add > 6) then
     abook()
     else
+    pc.beep(150, 0.1)
+    pc.beep(150, 0.1)
     gpu.set(1,25, "Wrong address")
     clsmsgtimerid = event.timer(5, clsmsg)
     end
@@ -876,6 +889,7 @@ gpu.set(73, 21, "[ DIAL ]")
     if (gdialed) then
     sendmsg()
     else
+    pc.beep(150, 0.5)
     gpu.set(1,25,"Not dialed")
     clsmsgtimerid = event.timer(5, clsmsg)
     end
@@ -883,11 +897,13 @@ gpu.set(73, 21, "[ DIAL ]")
    event.ignore("touch", abort)
    term.clear()
    event.cancel(clsmsgtimerid)
+   pc.beep(250, 0.5)
    event.listen("modem_message", maingateupdate)
    mainscreen()
    else
     if (stype == "MILKYWAY") then
      if (x>46 and y < 20 and #add < 9) then
+     pc.beep(300, 0.5)
      adcheck = true
       for _, val in ipairs(add) do
        if (val == mwf[y+math.floor((x-47)/17)*19]) then adcheck = false end
@@ -905,6 +921,7 @@ gpu.set(73, 21, "[ DIAL ]")
      end
     elseif (stype == "UNIVERSE") then
      if (x>60 and y < 19 and #add < 9) then
+     pc.beep(300, 0.5)
      adcheck = true
       for _, val in ipairs(add) do
        if (val == unf[y+math.floor((x-61)/10)*18]) then adcheck = false end
@@ -930,6 +947,7 @@ end
 --find nearby gates--
 function linkbreak()
 gpu.set(23, 12, "No gate detected within 20 blocks")
+pc.beep(100, 2)
 os.sleep(2)
 term.clear()
 mainscreen()
@@ -956,6 +974,7 @@ event.ignore("modem_message", maingateupdate)
  end
  if distance > 20 then linkbreak()
  else
+ pc.beep(500, 0.5)
  if (state == "open") then gdialed = true else gdialed = false end
  local t = 1
  if (stateadd == "[]") then stateadd = nil else stateadd = string.gsub(string.gsub(stateadd, "%[", ""), "%]", "") end
@@ -999,9 +1018,9 @@ end
 --main screen gate update--
 function maingateupdate(_, recev, _, _, _, msg, tstype, state, energy, maxenergy, diaddress, gateaddress)
 local ignor = true
-while ignor do
-ignor = event.ignore("modem_message", maingateupdate)
-end
+ while ignor do
+ ignor = event.ignore("modem_message", maingateupdate)
+ end
 os.sleep(0.2)
 gpu.fill(29, 10, 11, 1, "　")
 gpu.setForeground(8, true)
@@ -1022,7 +1041,6 @@ if (tun and recev == tunnel.address) then
  local addtype = ""
  local mainadd = {}
  local num = 1
- 
   for k = 1, 2 do
   num = 1
    if (k == 1) then
@@ -1095,9 +1113,8 @@ if (tun and recev == tunnel.address) then
     mainbook:write(tostring(key), " = ", string.format("%s", string.gsub(string.gsub(string.gsub(serial.serialize(val), "\"", ""), "{", ""), "}", "")), "\n")
     end
    end
-	 mainbook:close()
+  mainbook:close()
   end
-  
  local eneper = tostring(tonumber(energy) *100 / tonumber(maxenergy))
  local dialedadd = {}
  local t = 1
@@ -1275,6 +1292,9 @@ ybase = 0
   gpu.set(66, 11+key, val)
   end
   end
+ pc.beep(150, 1)
+ pc.beep(200, 0.5)
+ pc.beep(300, 1)
  end
 else
 gpu.setForeground(8, true)
