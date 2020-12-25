@@ -7,13 +7,13 @@ if (comp.isAvailable("gpu")) then
  gpu = comp.gpu
  if(gpu.maxDepth() < 4) then
  gpu.set(1,10,"Please, install Graphics Card tier 2 or higher") 
- pc.beep(40, 1)
- pc.beep(40, 1)
+ pc.beep(40, 0.5)
+ pc.beep(40, 0.5)
  os.sleep(2)
  os.exit(false)
  end
 else
-pc.beep(40, 2)
+pc.beep(40, 1)
 os.exit(false)
 end
 local modem
@@ -21,14 +21,20 @@ local mod = comp.isAvailable("modem")
 if (mod) then
  modem = comp.modem
  if(comp.modem.isWireless() == false) then
- pc.beep(40, 1)
- pc.beep(40, 1)
- gpu.set(1,10,"Please, install Wireless Card")
+ pc.beep(40, 0.5)
+ pc.beep(40, 0.5)
+ gpu.set(1,10,"Please, install Wireless Card level 2")
+ os.sleep(2) 
+ os.exit(false)
+ elseif (comp.modem.setStrength(400) == 16) then
+ pc.beep(40, 0.5)
+ pc.beep(40, 0.5)
+ gpu.set(1,10,"Please, install Wireless Card level 2")
  os.sleep(2) 
  os.exit(false)
  end
 else
-pc.beep(40, 2)
+pc.beep(40, 1)
 os.exit(false)
 end
 local term = require("term")
@@ -660,8 +666,8 @@ local _, _, xmain, ymain = event.pull("touch")
    end
   else
    if (math.fmod(ymain-6, 4) == 0 and addbook[(ymain-2)/4+shown] ~= nil) then
-   pc.beep(500, 0.5)
-   pc.beep(500, 0.5)
+   pc.beep(500, 0.25)
+   pc.beep(500, 0.25)
    if (gdialed ~= true) then
 	for _, val in pairs(addbook[(ymain-2)/4+shown]) do
 	add = val
@@ -761,10 +767,10 @@ os.sleep(0.1)
    pc.beep(400, 0.1)
    os.sleep(0.01)
    if (diad == "abort") then abortm = true
-   pc.beep(250, 0.5)
+   pc.beep(250, 0.25)
    elseif (diad == "dialed") then goto continue
-   pc.beep(600, 0.5)
-   pc.beep(600, 0.5)
+   pc.beep(600, 0.25)
+   pc.beep(600, 0.25)
    else
    diads = serial.unserialize(diad)
     for i, vali in ipairs(add) do
@@ -889,7 +895,7 @@ gpu.set(73, 21, "[ DIAL ]")
     if (gdialed) then
     sendmsg()
     else
-    pc.beep(150, 0.5)
+    pc.beep(150, 0.25)
     gpu.set(1,25,"Not dialed")
     clsmsgtimerid = event.timer(5, clsmsg)
     end
@@ -897,13 +903,13 @@ gpu.set(73, 21, "[ DIAL ]")
    event.ignore("touch", abort)
    term.clear()
    event.cancel(clsmsgtimerid)
-   pc.beep(250, 0.5)
+   pc.beep(250, 0.25)
    event.listen("modem_message", maingateupdate)
    mainscreen()
    else
     if (stype == "MILKYWAY") then
      if (x>46 and y < 20 and #add < 9) then
-     pc.beep(300, 0.5)
+     pc.beep(300, 0.25)
      adcheck = true
       for _, val in ipairs(add) do
        if (val == mwf[y+math.floor((x-47)/17)*19]) then adcheck = false end
@@ -921,7 +927,7 @@ gpu.set(73, 21, "[ DIAL ]")
      end
     elseif (stype == "UNIVERSE") then
      if (x>60 and y < 19 and #add < 9) then
-     pc.beep(300, 0.5)
+     pc.beep(300, 0.25)
      adcheck = true
       for _, val in ipairs(add) do
        if (val == unf[y+math.floor((x-61)/10)*18]) then adcheck = false end
@@ -974,7 +980,7 @@ event.ignore("modem_message", maingateupdate)
  end
  if distance > 20 then linkbreak()
  else
- pc.beep(500, 0.5)
+ pc.beep(500, 0.25)
  if (state == "open") then gdialed = true else gdialed = false end
  local t = 1
  if (stateadd == "[]") then stateadd = nil else stateadd = string.gsub(string.gsub(stateadd, "%[", ""), "%]", "") end
@@ -1292,9 +1298,9 @@ ybase = 0
   gpu.set(66, 11+key, val)
   end
   end
- pc.beep(150, 1)
- pc.beep(200, 0.5)
- pc.beep(300, 1)
+ pc.beep(150, 0.5)
+ pc.beep(200, 0.25)
+ pc.beep(300, 0.25)
  end
 else
 gpu.setForeground(8, true)
