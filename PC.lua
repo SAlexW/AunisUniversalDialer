@@ -88,10 +88,15 @@ end
 --work with text messages--
 function messagework (mess)
 print(mess)
+computer.beep(300, 1.5)
+computer.beep(500, 1.5)
 end
  
 function tunnelmessagework (mess)
 print(mess)
+computer.beep(300, 1)
+computer.beep(400, 1)
+computer.beep(500, 1)
 end
 --work with text messages--
  
