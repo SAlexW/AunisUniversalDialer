@@ -68,6 +68,8 @@ local linklist = {}
 local tuntype
 local tunnel
 local sortmode
+local GlyphType = ""
+local GlyphImages = {}
 if (tun) then 
  tunnel = comp.tunnel
  tunnel.setWakeMessage("link", true)
@@ -157,7 +159,7 @@ if(sort == 1) then dofile("MWGS.ff") elseif(sort == 2) then dofile("MWDS.ff") el
 
 --manual dialing glyph table reload--
 function mwreload()
-dofile("MWG.ff")
+if (GlyphType ~= "MILKYWAY") then dofile("MWG.ff") GlyphType = "MILKYWAY" end
 gpu.fill(1, 1, 23, 24, "　")
 gpu.setForeground(0, true)
 gpu.setBackground(15, true)
@@ -168,7 +170,7 @@ gpu.set(47, 20, "└────────────────┴───
 end
 
 function unreload()
-dofile("UNG.ff")
+if (GlyphType ~= "UNIVERSE") then dofile("UNG.ff") GlyphType = "UNIVERSE" end
 gpu.fill(1, 1, 30, 24, "　")
 gpu.setForeground(0, true)
 gpu.setBackground(15, true)
@@ -1333,7 +1335,6 @@ end
 --main screen--
 function mainscreen()
 term.clear()
-gpu.set(1, 25, tostring(card))
 linklist = {}
 gpu.setBackground(15, true)
 gpu.setForeground(0, true)
