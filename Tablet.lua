@@ -54,6 +54,7 @@ local card, mode
 card = ""
 local stype = ""
 local infflag = true
+local glflag = true
 local adcheck = true
 local xt, yt = 0
 local madd, msg = ""
@@ -73,7 +74,10 @@ local GlyphImages = {}
 if (tun) then 
  tunnel = comp.tunnel
  tunnel.setWakeMessage("link", true)
- dofile("GI.ff")
+  if (glflag) then
+  dofile("GI.ff")
+  glflag = false
+  end
 end
 --global variables--
 
@@ -1048,6 +1052,7 @@ local ignor = true
  end
 os.sleep(0.2)
 gpu.fill(29, 10, 11, 1, "　")
+	gpu.set(1,25,msg)
 gpu.setForeground(8, true)
 event.cancel(clsmsgtimerid)
 if (tun and recev == tunnel.address) then
