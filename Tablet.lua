@@ -1071,7 +1071,6 @@ if (tun and recev == tunnel.address) then
  local addtype = ""
  local mainadd = {}
  local num = 1
- gpu.set(1,24,"baseaddstr")
  if baseaddflag then
  baseaddflag = false
  for k = 1, 2 do
@@ -1150,7 +1149,6 @@ if (tun and recev == tunnel.address) then
   mainbook:close()
   end
  end
- gpu.set(1,25,"baseaddend")
  local eneper = tostring(tonumber(energy) *100 / tonumber(maxenergy))
  local dialedadd = {}
  local t = 1
