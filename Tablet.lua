@@ -240,7 +240,6 @@ end
 --abort dialing / disengagge gate--
 function abort(_, _, x, y)
  if (x>72 and y==22) then
- pc.beep(250, 0.5)
  abortm = true
  event.ignore("touch", abort)
  if (card == "modem") then
@@ -282,13 +281,13 @@ function abort(_, _, x, y)
  term.clear()
  mainscreen()
  end
+ pc.beep(250, 0.5)
  mainMD()
 end
 
 function abortbook(_, _, x, y)
 event.cancel(clsmsgtimerid)
 if (x > 59 and x < 73 and y == 1) then
- pc.beep(250, 0.5)
  abortm = true
  event.ignore("touch", abortbook)
  if (card == "modem") then
@@ -307,6 +306,7 @@ if (x > 59 and x < 73 and y == 1) then
   gdialed = false
   end
  clsmsgtimerid = event.timer(5, addressbookwork)
+ pc.beep(250, 0.5)
  os.sleep(0.1)
 end
 --abort dialing / disengagge gate--
@@ -912,7 +912,6 @@ gpu.set(73, 21, "[ DIAL ]")
    pc.beep(1000, 0.1)
    elseif (x>72 and y==22) then
    abort(_, _, x, y)
-   pc.beep(250, 0.5)
    elseif (x>72 and y==24) then
     if ((add[#add] == "Point of Origin" or add[#add] == "Glyph 17") and #add > 6) then
     abook()
