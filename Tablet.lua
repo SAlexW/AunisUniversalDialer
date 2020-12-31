@@ -55,6 +55,7 @@ card = ""
 local stype = ""
 local infflag = true
 local glflag = true
+local baseaddflag = true
 local adcheck = true
 local xt, yt = 0
 local madd, msg = ""
@@ -1063,7 +1064,6 @@ if (tun and recev == tunnel.address) then
   gpu.set(34,2, "Energy:")
   gpu.set(34,3, string.format("%s%%", string.sub(energy,1,string.find(energy,'.')+4)))
  elseif (msg == "main") then 
- gpu.set(1,24,"baseaddstr")
  event.listen("modem_message", maingateupdate)
  local ybase = 0 
  local gateadd = serial.unserialize(gateaddress)
@@ -1071,7 +1071,10 @@ if (tun and recev == tunnel.address) then
  local addtype = ""
  local mainadd = {}
  local num = 1
-  for k = 1, 2 do
+ gpu.set(1,24,"baseaddstr")
+ if baseaddflag then
+ baseaddflag = false
+ for k = 1, 2 do
   num = 1
   mainadd = {}
    if (k == 1) then
@@ -1146,7 +1149,8 @@ if (tun and recev == tunnel.address) then
    end
   mainbook:close()
   end
- gpu.set(1,24,"baseaddend")
+ end
+ gpu.set(1,25,"baseaddend")
  local eneper = tostring(tonumber(energy) *100 / tonumber(maxenergy))
  local dialedadd = {}
  local t = 1
