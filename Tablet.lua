@@ -51,6 +51,7 @@ local unf = {"Glyph 1", "Glyph 2", "Glyph 3", "Glyph 4", "Glyph 5", "Glyph 6", "
 local pgf = {"Acjesis", "Lenchan", "Alura", "Ca Po", "Laylox", "Ecrumig", "Avoniv", "Bydo", "Aaxel", "Aldeni", "Setas", "Arami", "Danami", "Poco Re", "Robandus", "Recktic", "Zamilloz", "Subido", "Dawnre", "Salma", "Hamlinto", "Elenami", "Tahnan", "Zeo", "Roehi", "Once El", "Baselai", "Sandovi", "Illume", "Amiwill", "Sibbron", "Gilltin", "Abrin", "Ramnon", "Olavii", "Hacemill"}
 local add = {}
 local card, mode
+card = ""
 local stype = ""
 local infflag = true
 local adcheck = true
@@ -1320,7 +1321,7 @@ end
 --main screen--
 function mainscreen()
 term.clear()
-gpu.set(1,25,tostring(card))
+gpu.set(1, 25, tostring(card))
 linklist = {}
 gpu.setBackground(15, true)
 gpu.setForeground(0, true)
