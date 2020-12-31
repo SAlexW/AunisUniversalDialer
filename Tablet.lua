@@ -571,6 +571,7 @@ end
 local _, _, xmain, ymain = event.pull("touch")
  if (xmain > 73 and ymain == 1) then
  term.clear()
+ book:close()
  event.cancel(clsmsgtimerid)
  event.listen("modem_message", maingateupdate)
  mainscreen()
