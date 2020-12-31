@@ -858,8 +858,10 @@ ignor = event.ignore("modem_message", maingateupdate)
 end
  if (stype == "MILKYWAY") then
  mwreload()
+ dofile("MWG.ff")
  elseif (stype == "UNIVERSE") then
  unreload()
+ dofile("UNG.ff")
  end
 gpu.set(1,25,GlyphType)
 gpu.set(73, 21, "[ DIAL ]")
