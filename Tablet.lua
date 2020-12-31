@@ -1301,9 +1301,9 @@ ybase = 0
   gpu.set(66, 11+key, val)
   end
   end
- pc.beep(150, 0.5)
- pc.beep(200, 0.25)
- pc.beep(300, 0.25)
+ pc.beep(150, 0.25)
+ pc.beep(200, 0.125)
+ pc.beep(300, 0.125)
  end
 else
 gpu.setForeground(8, true)
@@ -1320,6 +1320,7 @@ end
 --main screen--
 function mainscreen()
 term.clear()
+gpu.set(1,25,card)
 linklist = {}
 gpu.setBackground(15, true)
 gpu.setForeground(0, true)
