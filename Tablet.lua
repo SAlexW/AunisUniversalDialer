@@ -75,6 +75,26 @@ if (tun) then
 end
 --global variables--
 
+--checking address books--
+function fopen()
+local book
+book = io.open("bookMW.ff", "r")
+if (book == nil) then
+    book = io.open("bookMW.ff", "w")
+    book:close()
+end
+book:close()
+book = io.open("bookUN.ff", "r")
+if (book == nil) then
+    book = io.open("bookUN.ff", "w")
+    book:close()
+end
+book:close()
+end
+
+fopen()
+--checking address books--
+
 --message read--
 function keyadd(_,_,ch,code,_)
 local posx, posy = term.getCursor()
@@ -134,22 +154,6 @@ sortchoose()
 
 if(sort == 1) then dofile("MWGS.ff") elseif(sort == 2) then dofile("MWDS.ff") else dofile("MWAS.ff") end
 --Milkyway glyph sorting method choose--
-
---checking address books--
-function fopen()
-local book
-book = io.open("bookMW.ff", "r")
-if book == nil then
-    book = io.open("bookMW.ff", "w")
-    book:close()
-end
-book = io.open("bookUN.ff", "r")
-if book == nil then
-    book = io.open("bookUN.ff", "w")
-    book:close()
-end
-end
---checking address books--
 
 --manual dialing glyph table reload--
 function mwreload()
@@ -1028,7 +1032,6 @@ event.ignore("modem_message", maingateupdate)
  end
  os.sleep(0.01)
  term.clear()
- fopen()
  mainMD()
 end
 --find nearby gates--
