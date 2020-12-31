@@ -886,7 +886,7 @@ gpu.set(73, 21, "[ DIAL ]")
     end
    else
     if (stype == "MILKYWAY") then
-    gpu.setForeground(12, true)
+    gpu.setForeground(12, true) 
     elseif (stype == "UNIVERSE") then
     gpu.setForeground(7, true)
     end
