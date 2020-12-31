@@ -164,7 +164,7 @@ if(sort == 1) then dofile("MWGS.ff") elseif(sort == 2) then dofile("MWDS.ff") el
 
 --manual dialing glyph table reload--
 function mwreload()
-if (GlyphType ~= "MILKYWAY") then dofile("MWG.ff") GlyphType = "MILKYWAY" end
+if (GlyphType ~= "mw") then dofile("MWG.ff") GlyphType = "mw" end
 gpu.fill(1, 1, 23, 24, "　")
 gpu.setForeground(0, true)
 gpu.setBackground(15, true)
@@ -175,7 +175,7 @@ gpu.set(47, 20, "└────────────────┴───
 end
 
 function unreload()
-if (GlyphType ~= "UNIVERSE") then dofile("UNG.ff") GlyphType = "UNIVERSE" end
+if (GlyphType ~= "un") then dofile("UNG.ff") GlyphType = "un" end
 gpu.fill(1, 1, 30, 24, "　")
 gpu.setForeground(0, true)
 gpu.setBackground(15, true)
@@ -856,6 +856,7 @@ end
  elseif (stype == "UNIVERSE") then
  unreload()
  end
+gpu.set(1,25,GlyphType)
 gpu.set(73, 21, "[ DIAL ]")
  if (gdialed) then
  gpu.set(73, 22, "[ ABORT]")  
