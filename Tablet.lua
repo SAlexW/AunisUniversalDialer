@@ -30,7 +30,7 @@ if (mod) then
  pc.beep(40, 0.5)
  pc.beep(40, 0.5)
  gpu.set(1,10,"Please, install Wireless Card level 2")
- os.sleep(2) 
+ os.sleep(2)
  os.exit(false)
  end
 else
