@@ -923,7 +923,7 @@ gpu.set(73, 21, "[ DIAL ]")
    event.cancel(clsmsgtimerid)
    event.listen("modem_message", maingateupdate)
    pc.beep(250, 0.25)
-   if (tun) then card = tunnel end
+   if (tun) then card = "tunnel" end
    mainscreen()
    else
     if (stype == "MILKYWAY") then
