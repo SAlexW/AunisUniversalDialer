@@ -423,7 +423,7 @@ gpu.setForeground(0, true)
 local booksel
  if (mode == "work") then
  booksel = "MILKYWAY"
- else
+ elseif (mode == "MILKYWAY" or mode == "UNIVERSE")
  booksel = mode
   if (card == "modem") then
   modem.send(madd, 1, "link")
@@ -432,6 +432,15 @@ local booksel
   tunnel.send("link")
   _, _, _, _, _, _, _, bookstate = event.pull("modem_message", tunnel.address)
   end
+ else
+ term.clear()
+ gpu.set(28,12,"ERROR! Please, try again")
+ pc.beep(50,1)
+ os.sleep(1)
+ term.clear()
+ event.cancel(clsmsgtimerid)
+ event.listen("modem_message", maingateupdate)
+ mainscreen()
  end
 if bookstate == "open" then gdialed = true end
 ::addbookstart::
