@@ -1052,7 +1052,6 @@ local ignor = true
  end
 os.sleep(0.2)
 gpu.fill(29, 10, 11, 1, "　")
-	gpu.set(1,25,msg)
 gpu.setForeground(8, true)
 event.cancel(clsmsgtimerid)
 if (tun and recev == tunnel.address) then
@@ -1064,6 +1063,7 @@ if (tun and recev == tunnel.address) then
   gpu.set(34,2, "Energy:")
   gpu.set(34,3, string.format("%s%%", string.sub(energy,1,string.find(energy,'.')+4)))
  elseif (msg == "main") then 
+ gpu.set(1,24,"addstr")
  event.listen("modem_message", maingateupdate)
  local ybase = 0 
  local gateadd = serial.unserialize(gateaddress)
@@ -1093,6 +1093,7 @@ if (tun and recev == tunnel.address) then
 	num = num+1
    end
   ::mainbookend::
+  mainbok:close()
   end
   local mainaddtimed = mainadd[1]
    if (table.concat(mainadd[1]) == "#") then
@@ -1160,6 +1161,7 @@ if (tun and recev == tunnel.address) then
    end
   t = t+1
   end
+gpu.set(1,25,"addend")
 add = dialedadd
 tuntype = tstype
 stype = tstype
