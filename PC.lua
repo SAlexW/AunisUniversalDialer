@@ -336,7 +336,7 @@ end
  
 --start program--
 function start()
-modem.open(1)
+modem.open(100)
 modem.setStrength(30)
 if (rep) then
 term.clear()
