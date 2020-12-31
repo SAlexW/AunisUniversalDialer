@@ -55,6 +55,7 @@ card = ""
 local stype = ""
 local infflag = true
 local glflag = true
+local tunaddcheck = true
 local adcheck = true
 local xt, yt = 0
 local madd, msg = ""
@@ -1064,12 +1065,16 @@ if (tun and recev == tunnel.address) then
   gpu.set(34,3, string.format("%s%%", string.sub(energy,1,string.find(energy,'.')+4)))
  elseif (msg == "main") then 
  event.listen("modem_message", maingateupdate)
+ --if (tunaddcheck) then
+ tunaddcheck = false
  local ybase = 0 
  local gateadd = serial.unserialize(gateaddress)
  local mainbook
  local addtype = ""
  local mainadd = {}
  local num = 1
+ if tunaddcheck then
+ tunaddcheck = false
   for k = 1, 2 do
   num = 1
   mainadd = {}
@@ -1145,6 +1150,7 @@ if (tun and recev == tunnel.address) then
    end
   mainbook:close()
   end
+ end
  local eneper = tostring(tonumber(energy) *100 / tonumber(maxenergy))
  local dialedadd = {}
  local t = 1
