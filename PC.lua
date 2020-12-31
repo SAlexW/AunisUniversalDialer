@@ -65,7 +65,6 @@ function tunmessage()
  tunmessagebool = false
  gateadd = gate.address
  tunnel.send("main", gate.getGateType(), state, gate.getEnergyStored(), gate.getMaxEnergyStored(), gate.dialedAddress, serial.serialize(gate.stargateAddress))
- tunnel.send("main", gate.getGateType(), state, gate.getEnergyStored(), gate.getMaxEnergyStored(), gate.dialedAddress, serial.serialize(gate.stargateAddress))
  if(gate.getEnergyStored()/gate.getMaxEnergyStored() < 1 and gate.getGateStatus == "idle") then
  event.timer(10, tunenergymessage)
  end
@@ -142,8 +141,6 @@ if (msg == "link") then
  tunnelmessagework(msga)
  os.sleep(0.1)
  elseif (msg == "ener") then
- tunnel.send("ener", gate.getEnergyStored(), gate.getMaxEnergyStored())
- tunnel.send("ener", gate.getEnergyStored(), gate.getMaxEnergyStored())
  tunnel.send("ener", gate.getEnergyStored(), gate.getMaxEnergyStored())
  os.sleep(0.1)
  elseif (msg == "abort") then
