@@ -423,7 +423,7 @@ gpu.setForeground(0, true)
 local booksel
  if (mode == "work") then
  booksel = "MILKYWAY"
- elseif (mode == "MILKYWAY" or mode == "UNIVERSE")
+ elseif (mode == "MILKYWAY" or mode == "UNIVERSE") then
  booksel = mode
   if (card == "modem") then
   modem.send(madd, 1, "link")
