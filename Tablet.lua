@@ -1063,7 +1063,6 @@ if (tun and recev == tunnel.address) then
   gpu.set(34,2, "Energy:")
   gpu.set(34,3, string.format("%s%%", string.sub(energy,1,string.find(energy,'.')+4)))
  elseif (msg == "main") then 
- gpu.set(1,24,"addstr")
  event.listen("modem_message", maingateupdate)
  local ybase = 0 
  local gateadd = serial.unserialize(gateaddress)
@@ -1160,7 +1159,6 @@ if (tun and recev == tunnel.address) then
    end
   t = t+1
   end
-gpu.set(1,25,"addend")
 add = dialedadd
 tuntype = tstype
 stype = tstype
