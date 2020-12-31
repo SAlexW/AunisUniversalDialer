@@ -1320,7 +1320,7 @@ end
 --main screen--
 function mainscreen()
 term.clear()
-gpu.set(1,25,card)
+gpu.set(1,25,tostring(card))
 linklist = {}
 gpu.setBackground(15, true)
 gpu.setForeground(0, true)
