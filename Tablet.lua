@@ -1093,7 +1093,7 @@ if (tun and recev == tunnel.address) then
 	num = num+1
    end
   ::mainbookend::
-  mainbok:close()
+  mainbook:close()
   end
   local mainaddtimed = mainadd[1]
    if (table.concat(mainadd[1]) == "#") then
