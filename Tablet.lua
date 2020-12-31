@@ -1496,7 +1496,7 @@ end
 
 --start program--
 if (infflag) then
-modem.open(1)
+modem.open(100)
 modem.setStrength(50)
 term.clear()
 mainscreen()
