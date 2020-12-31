@@ -863,7 +863,6 @@ end
  unreload()
  dofile("UNG.ff")
  end
-gpu.set(1,25,GlyphType)
 gpu.set(73, 21, "[ DIAL ]")
  if (gdialed) then
  gpu.set(73, 22, "[ ABORT]")  
