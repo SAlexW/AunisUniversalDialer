@@ -7,13 +7,13 @@ if (comp.isAvailable("gpu")) then
  gpu = comp.gpu
  if(gpu.maxDepth() < 4) then
  gpu.set(1,10,"Please, install Graphics Card tier 2 or higher") 
- pc.beep(40, 0.5)
- pc.beep(40, 0.5)
+ --pc.beep(40, 0.5)
+ --pc.beep(40, 0.5)
  os.sleep(2)
  os.exit(false)
  end
 else
-pc.beep(40, 1)
+--pc.beep(40, 1)
 os.exit(false)
 end
 local modem
@@ -21,20 +21,20 @@ local mod = comp.isAvailable("modem")
 if (mod) then
  modem = comp.modem
  if(comp.modem.isWireless() == false) then
- pc.beep(40, 0.5)
- pc.beep(40, 0.5)
+ --pc.beep(40, 0.5)
+ --pc.beep(40, 0.5)
  gpu.set(1,10,"Please, install Wireless Card level 2")
  os.sleep(2) 
  os.exit(false)
  elseif (comp.modem.setStrength(400) == 16) then
- pc.beep(40, 0.5)
- pc.beep(40, 0.5)
+ --pc.beep(40, 0.5)
+ --pc.beep(40, 0.5)
  gpu.set(1,10,"Please, install Wireless Card level 2")
  os.sleep(2)
  os.exit(false)
  end
 else
-pc.beep(40, 1)
+--pc.beep(40, 1)
 os.exit(false)
 end
 local term = require("term")
@@ -116,7 +116,7 @@ local posx, posy = term.getCursor()
  gpu.fill(posx, posy, 80-posx, 1, " ")
  gpu.set(posx, posy, iomessage)
  else
- pc.beep(40,0.1)
+ --pc.beep(40,0.1)
  end
  ::ioend::
 end
@@ -281,7 +281,7 @@ function abort(_, _, x, y)
  term.clear()
  mainscreen()
  end
- pc.beep(250, 0.5)
+ --pc.beep(250, 0.5)
  mainMD()
 end
 
@@ -306,7 +306,7 @@ if (x > 59 and x < 73 and y == 1) then
   gdialed = false
   end
  clsmsgtimerid = event.timer(5, addressbookwork)
- pc.beep(250, 0.5)
+ --pc.beep(250, 0.5)
  os.sleep(0.1)
 end
 --abort dialing / disengagge gate--
@@ -739,7 +739,6 @@ local _, _, xmain, ymain = event.pull("touch")
     if (card == "modem") then _, _, _, _, _, diad = event.pull("modem_message", modem.address) elseif (card == "tunnel") then  _, _, _, _, _, diad = event.pull("modem_message", tunnel.address) end
     os.sleep(0.01)
     clsmsgb()
-    --gpu.set(1, 25, diad)
      if (diad == "dialed") then
 	 gpu.set(1, 25, diad)
      os.sleep(0.01)
@@ -926,7 +925,7 @@ gpu.set(73, 21, "[ DIAL ]")
     sendmsg()
     else
     gpu.set(1,25,"Not dialed")
-    pc.beep(150, 0.25)
+    --pc.beep(150, 0.25)
     clsmsgtimerid = event.timer(5, clsmsg)
     end
    elseif (x>72 and y==25) then
@@ -934,7 +933,7 @@ gpu.set(73, 21, "[ DIAL ]")
    term.clear()
    event.cancel(clsmsgtimerid)
    event.listen("modem_message", maingateupdate)
-   pc.beep(250, 0.25)
+   --pc.beep(250, 0.25)
    if (tun) then card = "tunnel" end
    mainscreen()
    else
@@ -954,7 +953,7 @@ gpu.set(73, 21, "[ DIAL ]")
        end
       gpu.setForeground(0, true)
       end
-     pc.beep(300, 0.25)
+     --pc.beep(300, 0.25)
      end
     elseif (stype == "UNIVERSE") then
      if (x>60 and y < 19 and #add < 9) then
@@ -972,7 +971,7 @@ gpu.set(73, 21, "[ DIAL ]")
        end
       gpu.setForeground(0, true)
       end
-     pc.beep(300, 0.25)
+     --pc.beep(300, 0.25)
      end
    end
    	--goto mainloop
@@ -984,7 +983,7 @@ end
 --find nearby gates--
 function linkbreak()
 gpu.set(23, 12, "No gate detected within 20 blocks")
-pc.beep(100, 2)
+--pc.beep(100, 2)
 os.sleep(2)
 term.clear()
 mainscreen()
@@ -1011,7 +1010,7 @@ event.ignore("modem_message", maingateupdate)
  end
  if distance > 20 then linkbreak()
  else
- pc.beep(500, 0.25)
+ --pc.beep(500, 0.25)
  if (state == "open") then gdialed = true else gdialed = false end
  local t = 1
  if (stateadd == "[]") then stateadd = nil else stateadd = string.gsub(string.gsub(stateadd, "%[", ""), "%]", "") end
@@ -1332,9 +1331,9 @@ ybase = 0
   gpu.set(66, 11+key, val)
   end
   end
- pc.beep(150, 0.25)
- pc.beep(200, 0.125)
- pc.beep(300, 0.125)
+ --pc.beep(150, 0.25)
+ --pc.beep(200, 0.125)
+ --pc.beep(300, 0.125)
  end
 else
 gpu.setForeground(8, true)
@@ -1473,7 +1472,7 @@ local _, _, xmain, ymain = event.pull("touch")
  dofile("sort.ff")
  if(sort == 1) then dofile("MWGS.ff") elseif(sort == 2) then dofile("MWDS.ff") else dofile("MWAS.ff") end
  mainscreen()
- elseif (xmain<13 and (ymain == 22 or ymain == 23)) then
+ elseif (xmain<13 and (ymain == 22 or ymain == 23) and tun) then
  gpu.setBackground(0, true)
  gpu.setForeground(15, true)
  gpu.fill(1,24,80,2,"　")
