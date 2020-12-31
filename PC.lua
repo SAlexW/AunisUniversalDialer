@@ -134,7 +134,7 @@ rec = sadd
 if (tun and myad == tunnel.address) then 
  os.sleep(0.1)
 if (msg == "link") then
- os.sleep(0.1)
+ os.sleep(0.25)
  tunmessstate = ""
  tunmessage()
  elseif (msg == "mess" and radd ~= myad) then
