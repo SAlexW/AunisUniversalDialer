@@ -230,7 +230,7 @@ gpu.fill(1,24,40,2,"　")
 gpu.set(73, 24, "[->BOOK]") 
 gpu.set(73, 25, "[RETURN]")
  if (card == "modem") then
- modem.broadcast(1, "mess", iomessage, madd)
+ modem.broadcast(100, "mess", iomessage, madd)
  elseif (card == "tunnel") then
  tunnel.send("mess", iomessage)
  end
@@ -998,7 +998,7 @@ end
 function nearbyMDlink()
 event.ignore("modem_message", maingateupdate)
  if (card == "modem") then
- modem.broadcast(1, "link")
+ modem.broadcast(100, "link")
  gpu.set(28, 12, "Waiting for connection")
  event.listen("modem_message", nmdlink)
  os.sleep(2)
@@ -1433,7 +1433,7 @@ local _, _, xmain, ymain = event.pull("touch")
   end
  term.clear() 
  linklist = {}
- modem.broadcast(1, "link")
+ modem.broadcast(100, "link")
  gpu.set(28, 12, "Waiting for connection")
  event.listen("modem_message", nmdlink)
  os.sleep(2)
