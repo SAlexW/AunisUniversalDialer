@@ -227,7 +227,7 @@ if (msg == "link") then
 else
 if (msg == "link") then
 local state, _ = gate.getGateStatus()
-send(sadd, 1, gate.getGateType(), state, gate.dialedAddress)
+send(sadd, 100, gate.getGateType(), state, gate.dialedAddress)
 elseif (msg == "mess" and radd ~= myad) then
 messagework(msga)
 os.sleep(0.1)
@@ -259,31 +259,31 @@ event.ignore("component_available", tunmessage)
 event.ignore("stargate_failed", delaytunmessage)
  os.sleep(0.01)
  if (msga == "{}") then
- send(sadd, 1, "empty address")
+ send(sadd, 100, "empty address")
  else
  gadd = serial.unserialize(msga)
  if (gate.getEnergyRequiredToDial(gadd) == "address_malformed") then
- send(sadd, 1, "address malformed")
+ send(sadd, 100, "address malformed")
  elseif (gate.getEnergyRequiredToDial(gadd) == "not_merged") then
- send(sadd, 1, "not merged")
+ send(sadd, 100, "not merged")
  elseif (gadd[#gadd] ~= "Point of Origin" and gadd[#gadd] ~= "Glyph 17") then
   if (gate.getGateType() == "MILKYWAY") then
-  send(sadd, 1, "Missing Point of Origin")
+  send(sadd, 100, "Missing Point of Origin")
   elseif (gate.getGateType() == "UNIVERSE") then
-  send(sadd, 1, "Missing Glyph 17")
+  send(sadd, 100, "Missing Glyph 17")
   end
  else 
  os.sleep(0.01)
  ser = {}
  gadd = addcheck(gadd)
- send(sadd, 1, "dialing", #gadd) 
+ send(sadd, 100, "dialing", #gadd) 
  os.sleep(0.02)
   for _, val in ipairs(gadd) do
    while (gate.getGateStatus() ~= "idle") do
    os.sleep(0)
    end
    if (disen) then
-   send(sadd, 1, "abort")
+   send(sadd, 100, "abort")
    gate.disengageGate()
    disen = false
    tunidle = true
@@ -301,7 +301,7 @@ event.ignore("stargate_failed", delaytunmessage)
    if (gate.getGateType() == "UNIVERSE") then os.sleep(0.16) end
    gate.engageSymbol(val)
    table.insert(ser, val)
-   send(sadd, 1, serial.serialize(ser))
+   send(sadd, 100, serial.serialize(ser))
    end
   end
   while (gate.getGateStatus() ~= "idle") do
@@ -310,7 +310,7 @@ event.ignore("stargate_failed", delaytunmessage)
  if (gate.getGateType() == "UNIVERSE") then os.sleep(0.16) end
  event.ignore("modem_message", diseng)
  gate.engageGate()
- send(sadd, 1, "dialed")
+ send(sadd, 100, "dialed")
  event.listen("modem_message", main)
  tunidle = true
  event.listen("stargate_incoming_wormhole", tunmessage)
@@ -325,7 +325,7 @@ event.ignore("stargate_failed", delaytunmessage)
  end
  end
 elseif (msg == "dis" and gate.getGatetatus() == "open") then 
-send(sadd, 1, "disengage")
+send(sadd, 100, "disengage")
 gate.disengageGate()
 fclose()
 tunidle = true
