@@ -243,7 +243,7 @@ function abort(_, _, x, y)
  abortm = true
  event.ignore("touch", abort)
  if (card == "modem") then
- modem.send(madd, 1, "abort")
+modem.send(madd, 100, "abort")
  elseif (card == "tunnel") then
  tunnel.send("abort")
  end
@@ -291,7 +291,7 @@ if (x > 59 and x < 73 and y == 1) then
  abortm = true
  event.ignore("touch", abortbook)
  if (card == "modem") then
- modem.send(madd, 1, "abort")
+modem.send(madd, 100, "abort")
  elseif (card == "tunnel") then
  tunnel.send("abort")
  end
@@ -442,7 +442,7 @@ local booksel
  elseif (mode == "MILKYWAY" or mode == "UNIVERSE") then
  booksel = mode
   if (card == "modem") then
-  modem.send(madd, 1, "link")
+ modem.send(madd, 100, "link")
   _, _, _, _, _, _, bookstate = event.pull("modem_message", modem.address)
   elseif (card == "tunnel") then
   tunnel.send("link")
@@ -708,7 +708,7 @@ local _, _, xmain, ymain = event.pull("touch")
    local dmsg, size
    event.listen("touch", abortbook)
     if (card == "modem") then
-    modem.send(madd, 1, "add", serial.serialize(add))
+   modem.send(madd, 100, "add", serial.serialize(add))
     _, _, _, _, _, dmsg, size = event.pull("modem_message", modem.address)
     elseif (card == "tunnel") then
     tunnel.send("add", serial.serialize(add))
@@ -773,7 +773,7 @@ end
 local dmsg, size
 event.listen("touch", abort)
 if (card == "modem") then
-modem.send(madd, 1, "add", serial.serialize(add))
+modem.send(madd, 100, "add", serial.serialize(add))
 _, _, _, _, _, dmsg, size = event.pull("modem_message", modem.address)
 elseif (card == "tunnel") then
 tunnel.send("add", serial.serialize(add))
