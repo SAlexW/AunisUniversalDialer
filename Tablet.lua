@@ -1419,7 +1419,7 @@ local _, _, xmain, ymain = event.pull("touch")
   gpu.setForeground(0, true)
  card = "tunnel"
  nearbyMDlink()
- elseif (xmain>13 and xmain<29 and (ymain < 24 or ymain > 19)) then
+ elseif (xmain>13 and xmain<29 and (ymain < 24 and ymain > 19)) then
  mode = "work"
  addressbookwork()
  elseif (xmain>65 and (ymain == 20 or ymain == 21) and tun) then --main--
