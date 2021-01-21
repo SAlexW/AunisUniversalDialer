@@ -227,7 +227,7 @@ if (msg == "link") then
 else
 if (msg == "link") then
 local state, _ = gate.getGateStatus()
-send(sadd, 100, gate.getGateType(), state, gate.dialedAddress, gate.stargateAddress)
+send(sadd, 100, gate.getGateType(), state, gate.dialedAddress)
 elseif (msg == "mess" and radd ~= myad) then
 messagework(msga)
 os.sleep(0.1)
