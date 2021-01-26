@@ -2,6 +2,7 @@
 local comp = require("component")
 local event = require("event")
 local pc = require("computer")
+local math = require("math")
 local gpu
 if (comp.isAvailable("gpu")) then
  gpu = comp.gpu
@@ -122,14 +123,14 @@ local posx, posy = term.getCursor()
 end
 
 function messread(length)
-event.ignore("modem_message", maingateupdate)
+local bool = event.ignore("modem_message", maingateupdate)
 iolength = length
 iocheck = true
 iomessage = ""
 event.listen("key_down", keyadd)
  while (iocheck) do os.sleep(0) end
 event.ignore("key_down", keyadd)
-event.listen("modem_message", maingateupdate)
+if (bool) then event.listen("modem_message", maingateupdate) end
 end
 --message read--
 
@@ -160,6 +161,76 @@ sortchoose()
 
 if(sort == 1) then dofile("MWGS.ff") elseif(sort == 2) then dofile("MWDS.ff") else dofile("MWAS.ff") end
 --Milkyway glyph sorting method choose--
+
+--find nearby gates--
+function linkbreak()
+gpu.set(23, 12, "No gate detected within 20 blocks")
+pc.beep(100, 2)
+os.sleep(2)
+term.clear()
+mainscreen()
+end
+
+function nmdlink(_, lrec, lmadd, _, ldis, lmsg, lstate, lstateadd, lgate)
+ if (lrec == modem.address) then
+ table.insert(linklist, {["lmadd"] = lmadd, ["ldis"] = ldis, ["lmsg"] = lmsg, ["lstate"] = lstate, ["lstateadd"] = lstateadd, ["lgate"] = lgate})
+ end
+end
+
+function nearbyMDlink()
+event.ignore("modem_message", maingateupdate)
+ if (card == "modem") then
+ modem.broadcast(100, "link")
+ gpu.set(28, 12, "Waiting for connection")
+ event.listen("modem_message", nmdlink)
+ os.sleep(2)
+ event.ignore("modem_message", nmdlink)
+ local distance = 100
+ if #linklist == 0 then linkbreak() else
+ for _, val in ipairs(linklist) do
+  if val["ldis"] < distance then madd = val["lmadd"] distance = val["ldis"] msg = val["lmsg"] state = val["lstate"] stateadd = val["lstateadd"] end
+ end
+ if distance > 20 then linkbreak()
+ else
+ pc.beep(500, 0.25)
+ if (state == "open") then gdialed = true else gdialed = false end
+ local t = 1
+ if (stateadd == "[]") then stateadd = nil else stateadd = string.gsub(string.gsub(stateadd, "%[", ""), "%]", "") end
+  while (stateadd ~= nil) do
+   if(string.find(stateadd, ", ") ~= nil) then
+   add[t] = string.sub(stateadd, 1, string.find(stateadd, ", ")-1)
+   stateadd = string.sub(stateadd, string.find(stateadd, ", ")+2, string.len(stateadd))
+   else
+   add[t] = stateadd
+   stateadd = nil
+   end
+  t = t+1
+  end
+ end
+ end
+ stype = msg
+ elseif (card == "tunnel") then
+ tunnel.send("link")
+ _, _, _, _, _, _, stype, state, _, _, stateadd, _ = event.pull("modem_message")
+ if (state == "open") then gdialed = true else gdialed = false end
+ local t = 1
+ if (stateadd == "[]") then stateadd = nil else stateadd = string.gsub(string.gsub(stateadd, "%[", ""), "%]", "") end
+  while (stateadd ~= nil) do
+   if(string.find(stateadd, ", ") ~= nil) then
+   add[t] = string.sub(stateadd, 1, string.find(stateadd, ", ")-1)
+   stateadd = string.sub(stateadd, string.find(stateadd, ", ")+2, string.len(stateadd))
+   else
+   add[t] = stateadd
+   stateadd = nil
+   end
+  t = t+1
+  end
+ end
+ os.sleep(0.01)
+ term.clear()
+ mainMD()
+end
+--find nearby gates--
 
 --manual dialing glyph table reload--
 function mwreload()
@@ -506,8 +577,10 @@ gpu.set(77,21,"──>")
 gpu.set(5,1,string.format("Gate type: %s", booksel))
 if mode == "work" then
 gpu.set(60,1,"[CHANGE TYPE]")
+gpu.set(46,1,"[FIND NEARBY]")
 else
 gpu.set(60,1,"[ABORT  DIAL]")
+gpu.set(46,1,"             ")
 end
 ::bookworkloop::
 gpu.setBackground(15, true)
@@ -587,9 +660,81 @@ local _, _, xmain, ymain = event.pull("touch")
  mainscreen()
  elseif (xmain > 1 and xmain < 5 and ymain == 21 and shown > 0) then
  shown = shown - 4
+ gpu.setForeground(7, true)
+ gpu.fill(1,2, 80, 1, "━")  
+gpu.fill(1,22, 80, 1, "━")
+ for i = 1, 5 do
+ gpu.fill(9+(i-1)*16, 5, 1, 15, "│")
+ gpu.fill(1, 4*i, 80, 1, "━")
+ end
+ for i = 1, 5 do
+  if i ==1 or i == 5 then
+  if i == 5 then gpu.set(9+(i-1)*16, 2, "╋") gpu.set(9+(i-1)*16, 1, "┃") else gpu.set(9+(i-1)*16, 2, "┳") end
+  gpu.set(9+(i-1)*16, 3, "┃")
+  gpu.set(9+(i-1)*16, 4, "╇")
+  else
+  gpu.set(9+(i-1)*16, 4, "┯")
+  end
+ gpu.set(9+(i-1)*16, 20, "┷")
+ end
+ gpu.setForeground(0, true)
+ gpu.set(2,3,"Name")
+ gpu.set(24,3,"Address (Without Point of Origin)")
+ gpu.set(74,3,"Action")
+ gpu.setForeground(7, true)
+ for i = 1, 5 do
+  for j = 1, 3 do
+  gpu.set(9+(i-1)*16, 4*(j+1),"┿")
+  end
+ end
+ for i = 1, 4 do
+ gpu.fill(10, 2*(2*i+1), 63, 1, "─")
+ gpu.set(9, 2*(2*i+1), "├")
+ gpu.set(73, 2*(2*i+1), "┤")
+  for j = 1, 3 do
+  gpu.set(9+16*j, 2*(2*i+1), "┼")
+  end
+ end
+ gpu.setForeground(0, true)
  goto bookworkend
  elseif (xmain > 76 and xmain < 80 and ymain == 21 and shown+4 < #addbook) then
  shown = shown + 4
+ gpu.setForeground(7, true)
+ gpu.fill(1,2, 80, 1, "━")  
+gpu.fill(1,22, 80, 1, "━")
+ for i = 1, 5 do
+ gpu.fill(9+(i-1)*16, 5, 1, 15, "│")
+ gpu.fill(1, 4*i, 80, 1, "━")
+ end
+ for i = 1, 5 do
+  if i ==1 or i == 5 then
+  if i == 5 then gpu.set(9+(i-1)*16, 2, "╋") gpu.set(9+(i-1)*16, 1, "┃") else gpu.set(9+(i-1)*16, 2, "┳") end
+  gpu.set(9+(i-1)*16, 3, "┃")
+  gpu.set(9+(i-1)*16, 4, "╇")
+  else
+  gpu.set(9+(i-1)*16, 4, "┯")
+  end
+ gpu.set(9+(i-1)*16, 20, "┷")
+ end
+ gpu.setForeground(0, true)
+ gpu.set(2,3,"Name")
+ gpu.set(24,3,"Address (Without Point of Origin)")
+ gpu.set(74,3,"Action")
+ gpu.setForeground(7, true)
+ for i = 1, 5 do
+  for j = 1, 3 do
+  gpu.set(9+(i-1)*16, 4*(j+1),"┿")
+  end
+ end
+ for i = 1, 4 do
+ gpu.fill(10, 2*(2*i+1), 63, 1, "─")
+ gpu.set(9, 2*(2*i+1), "├")
+ gpu.set(73, 2*(2*i+1), "┤")
+  for j = 1, 3 do
+  gpu.set(9+16*j, 2*(2*i+1), "┼")
+  end
+ end
+ gpu.setForeground(0, true)
  goto bookworkend
  elseif (xmain > 59 and xmain < 73 and ymain == 1) then
   if (mode == "work") then
@@ -599,6 +744,213 @@ local _, _, xmain, ymain = event.pull("touch")
   abortbook(1, 2, xmain, ymain)
   goto bookworktouch
   end
+  elseif (xmain > 45 and xmain < 59 and ymain == 1 and mode == "work") then
+  linklist = {}
+  modem.broadcast(100, "link")
+  term.clear()
+  gpu.set(28, 12, "Waiting for connection")
+  event.listen("modem_message", nmdlink)
+  os.sleep(2)
+  event.ignore("modem_message", nmdlink)
+  local distance = 100
+   for i = #linklist, 1, -1 do
+    if (linklist[i]["ldis"] > distance) then
+     for j = i, #linklist-1 do
+	 linklist[j]=linklist[j+1]
+	 end
+    linklist[#linklist] = nil
+    end
+   end
+   ::clearlist::
+   local timedlmadd = nil
+   for i, v in ipairs(linklist) do
+    timedlmadd = v["lmadd"]
+	for j = #linklist, i+1, -1 do 
+	 if linklist[j]["lmadd"] == timedlmadd then
+	 for k = j, #linklist-1 do linklist[k] = linklist[k+1] end
+	 linklist[#linklist] = nil
+	 goto clearlist
+	 end
+	end
+   end
+   local MWadd = {}
+   local UNadd = {}
+   local MWbook = io.open("bookMW.ff", "r")
+   local MWnum = 0
+   local UNnum = 0
+    for l in MWbook:lines() do
+    MWnum = MWnum+1
+    if (l == "") then goto MWlistend end
+    MWadd[MWnum] = {}
+    MWadd[MWnum][l:sub(1, l:find("=")-2)] = {}
+     for t in string.gmatch(l:sub(l:find("=")+2), "([^,]+)") do
+     table.insert(MWadd[MWnum][l:sub(1, l:find("=")-2)], t)
+     end
+    end
+   ::MWlistend::
+   local UNbook = io.open("bookUN.ff", "r")
+    for l in UNbook:lines() do
+    UNnum = UNnum+1
+    if (l == "") then goto UNlistend end
+    UNadd[UNnum] = {}
+    UNadd[UNnum][l:sub(1, l:find("=")-2)] = {}
+     for t in string.gmatch(l:sub(l:find("=")+2), "([^,]+)") do
+     table.insert(UNadd[UNnum][l:sub(1, l:find("=")-2)], t)
+     end
+    end
+   ::UNlistend::
+   MWbook:close()
+   UNbook:close()
+   for _, v in ipairs(linklist) do
+   gpu.set(22, 12, "Gates found. Checking address books.")
+   local ltimedtbl = serial.unserialize(v["lgate"])
+   local checkcnt = 0
+   local MWname, UNname = nil
+   local MWncon, UNncon = 0
+   local booktest = 0
+    for ind, v in ipairs(MWadd) do
+     for key, val in pairs(v) do
+	 if (val[1] == ltimedtbl["MILKYWAY"][1] and val[2] == ltimedtbl["MILKYWAY"][2] and val[3] == ltimedtbl["MILKYWAY"][3] and val[4] == ltimedtbl["MILKYWAY"][4] and val[5] == ltimedtbl["MILKYWAY"][5] and val[6] == ltimedtbl["MILKYWAY"][6]) then
+	  MWname = key
+	  MWncon = ind
+	   if (val[7] == ltimedtbl["MILKYWAY"][7] and val[8] == ltimedtbl["MILKYWAY"][8]) then 
+	   booktest = 1 
+	   goto UNcheck
+	   else
+	   booktest = 2 MWadd[ind][MWname] = {}
+	   MWadd[ind][MWname] = ltimedtbl["MILKYWAY"]
+	   MWadd[ind][MWname][9] = "Point of Origin"
+	   goto UNcheck
+	   end
+	  end
+	  os.sleep(0)
+     end
+    end
+  ::UNcheck::
+    for ind, v in ipairs(UNadd) do
+     for key, val in pairs(v) do
+	 if (val[1] == ltimedtbl["UNIVERSE"][1] and val[2] == ltimedtbl["UNIVERSE"][2] and val[3] == ltimedtbl["UNIVERSE"][3] and val[4] == ltimedtbl["UNIVERSE"][4] and val[5] == ltimedtbl["UNIVERSE"][5] and val[6] == ltimedtbl["UNIVERSE"][6]) then
+	  UNname = key
+	  UNncon = ind
+	  if (val[7] == ltimedtbl["UNIVERSE"][7] and val[8] == ltimedtbl["UNIVERSE"][8]) then
+	  if (booktest < 10) then booktest = booktest + 10 end
+	  goto UNend
+	  else
+	  if (booktest < 10) then booktest = booktest + 20 end
+	  UNadd[ind][UNname] = {}
+	  UNadd[ind][UNname] = ltimedtbl["UNIVERSE"]
+	  UNadd[ind][UNname][9] = "Glyph 17"
+	  goto UNend
+	  end
+     end
+	 os.sleep(0)
+    end
+   end
+  ::UNend::
+  if (booktest == 11 or booktest == 12 or booktest == 21 or booktest == 22) then
+   if (MWname ~= UNname) then
+    ::chrepeat::
+    term.clear()
+    gpu.set(1, 12, "Same gate with different names found!")
+    gpu.set(1, 13, string.format("Choose one: 1 - %s, 2 - %s.", MWname, UNname))
+    term.setCursor(1,14)
+	messread(1)
+    local ch = iomessage
+	local memo = {}
+	if (ch == "1") then
+	memo = UNadd[UNncon][UNname]
+	UNadd[UNncon] = {}
+	UNadd[UNncon][MWname] = memo
+	elseif (ch == "2") then
+	memo = MWadd[MWncon][MWname]
+	MWadd[MWncon] = {}
+	MWadd[MWncon][UNname] = memo
+	else goto chrepeat
+	end
+   end
+  elseif (booktest == 10 or booktest == 20) then
+  term.clear()
+  gpu.set(31, 12, "Updating adresses.")
+  MWadd[#MWadd+1] = {}
+  MWadd[#MWadd][UNname] = ltimedtbl["MILKYWAY"]
+  MWadd[#MWadd][UNname][9] = "Point of Origin"
+  elseif (booktest == 1 or booktest == 2) then
+  term.clear()
+  gpu.set(31, 12, "Updating adresses.")
+  UNadd[#UNadd+1] = {}
+  UNadd[#UNadd][MWname] = ltimedtbl["UNIVERSE"]
+  UNadd[#UNadd][MWname][9] = "Glyph 17"
+  else 
+  term.clear()
+  ::namegatechoose::
+  gpu.set(1, 12, "New gate found")
+  gpu.set(1, 13, "Please, write new name. (8 characters max)")
+  term.setCursor(1,14)
+  messread(8)
+  local ch = iomessage
+      if ch:len() > 8 then
+    gpu.set(1,25, "Name too long")
+    clsmsgtimerid = event.timer(5, clsmsgb)
+    goto namegatechoose
+    elseif ch == "Base" or ch == "Base " or ch == "Base  " or ch == "Base   " or ch == "Base    " then
+    gpu.set(1,25, "This name is reserved. Please enter another name.")
+    clsmsgtimerid = event.timer(5, clsmsgb)
+    goto namegatechoose
+    else
+	 for i, v in ipairs (MWadd) do
+	  for key, _ in pairs (v) do
+	   if ch == key then 
+       gpu.set(1,25, "This name is already taken. Please enter another name.")
+       clsmsgtimerid = event.timer(5, clsmsgb)
+       goto namegatechoose
+	   end
+	  end
+	 end
+	 for i, v in ipairs (UNadd) do
+	  for key, _ in pairs (v) do
+	   if ch == key then 
+       gpu.set(1,25, "This name is already taken. Please enter another name.")
+       clsmsgtimerid = event.timer(5, clsmsgb)
+       goto namegatechoose
+	   end
+	  end
+	 end
+  MWadd[#MWadd+1] = {}
+  UNadd[#UNadd+1] = {}
+  MWadd[#MWadd][ch] = ltimedtbl["MILKYWAY"]
+  MWadd[#MWadd][ch][9] = "Point of Origin"
+  UNadd[#UNadd][ch] = ltimedtbl["UNIVERSE"]
+  UNadd[#UNadd][ch][9] = "Glyph 17"
+    end
+  end
+  os.sleep(0)
+ end
+ if MWadd == nil then MWadd = {} end
+ if UNadd == nil then UNadd = {} end
+ book = io.open("bookMW.ff", "w")
+ for _, v in ipairs(MWadd) do
+ local strtmd
+ local strtmdan
+  for key, val in pairs(v) do
+  strtmd = string.gsub(string.gsub(string.gsub(serial.serialize(val), "\"", ""), "{", ""), "}", "")
+	local fnd = strtmd:find("Origin")
+    strtmdan = strtmd:sub(1, fnd+5)
+  book:write(tostring(key), " = ", strtmdan, "\n")
+  end
+ end
+ book:close()
+ book = io.open("bookUN.ff", "w")
+ for _, v in ipairs(UNadd) do
+ local strtmd
+  for key, val in pairs(v) do
+  strtmd = string.gsub(string.gsub(string.gsub(serial.serialize(val), "\"", ""), "{", ""), "}", "")
+  local fnd = strtmd:find("Glyph 17")
+  strtmdan = strtmd:sub(1, fnd+7)
+  book:write(tostring(key), " = ", strtmdan, "\n")
+  end
+ end
+ book:close()  
+ goto addbookstart
  elseif (xmain > 73 and ymain > 4 and ymain < 20) then
   if (mode == "work") then
    if (math.fmod(ymain-5, 4) == 0 and addbook[(ymain-1)/4+shown] ~= nil and not((ymain-1)/4+shown == 1 and tun)) then
@@ -980,76 +1332,6 @@ gpu.set(73, 21, "[ DIAL ]")
 end
 --main manual dialing screen--
 
---find nearby gates--
-function linkbreak()
-gpu.set(23, 12, "No gate detected within 20 blocks")
-pc.beep(100, 2)
-os.sleep(2)
-term.clear()
-mainscreen()
-end
-
-function nmdlink(_, lrec, lmadd, _, ldis, lmsg, lstate, lstateadd)
- if (lrec == modem.address) then
- linklist[#linklist+1] = {["lmadd"] = lmadd, ["ldis"] = ldis, ["lmsg"] = lmsg, ["lstate"] = lstate, ["lstateadd"] = lstateadd}
- end
-end
-
-function nearbyMDlink()
-event.ignore("modem_message", maingateupdate)
- if (card == "modem") then
- modem.broadcast(100, "link")
- gpu.set(28, 12, "Waiting for connection")
- event.listen("modem_message", nmdlink)
- os.sleep(2)
- event.ignore("modem_message", nmdlink)
- local distance = 100
- if #linklist == 0 then linkbreak() else
- for _, val in ipairs(linklist) do
-  if val["ldis"] < distance then madd = val["lmadd"] distance = val["ldis"] msg = val["lmsg"] state = val["lstate"] stateadd = val["lstateadd"] end
- end
- if distance > 20 then linkbreak()
- else
- pc.beep(500, 0.25)
- if (state == "open") then gdialed = true else gdialed = false end
- local t = 1
- if (stateadd == "[]") then stateadd = nil else stateadd = string.gsub(string.gsub(stateadd, "%[", ""), "%]", "") end
-  while (stateadd ~= nil) do
-   if(string.find(stateadd, ", ") ~= nil) then
-   add[t] = string.sub(stateadd, 1, string.find(stateadd, ", ")-1)
-   stateadd = string.sub(stateadd, string.find(stateadd, ", ")+2, string.len(stateadd))
-   else
-   add[t] = stateadd
-   stateadd = nil
-   end
-  t = t+1
-  end
- end
- end
- stype = msg
- elseif (card == "tunnel") then
- tunnel.send("link")
- _, _, _, _, _, _, stype, state, _, _, stateadd, _ = event.pull("modem_message")
- if (state == "open") then gdialed = true else gdialed = false end
- local t = 1
- if (stateadd == "[]") then stateadd = nil else stateadd = string.gsub(string.gsub(stateadd, "%[", ""), "%]", "") end
-  while (stateadd ~= nil) do
-   if(string.find(stateadd, ", ") ~= nil) then
-   add[t] = string.sub(stateadd, 1, string.find(stateadd, ", ")-1)
-   stateadd = string.sub(stateadd, string.find(stateadd, ", ")+2, string.len(stateadd))
-   else
-   add[t] = stateadd
-   stateadd = nil
-   end
-  t = t+1
-  end
- end
- os.sleep(0.01)
- term.clear()
- mainMD()
-end
---find nearby gates--
-
 --main screen gate update--
 function maingateupdate(_, recev, _, _, _, msg, tstype, state, energy, maxenergy, diaddress, gateaddress)
 local ignor = true
@@ -1139,6 +1421,20 @@ if (tun and recev == tunnel.address) then
       elseif (addtype == "UNIVERSE") then
       table.insert(mainadd[1]["Base"], "Glyph 17")
       end
+    for i = 2, #mainadd do
+	 for key, val in pairs(mainadd[i]) do
+	  --if (val[1] == gateadd[addtype][1] and val[2] == gateadd[addtype][2] and val[3] == gateadd[addtype][3] and val[4] == gateadd[addtype][4] and val[5] == gateadd[addtype][5] and val[6] == gateadd[addtype][6]) then
+	  if (val[1] == basegateadd[1] and val[2] == basegateadd[2] and val[3] == basegateadd[3] and val[4] == basegateadd[4] and val[5] == basegateadd[5] and val[6] == basegateadd[6]) then
+      mainadd[i] = {}
+       for j = i+1, #mainadd do
+       mainadd[j-1] = mainadd[j]
+       end
+      mainadd[#mainadd] = nil	  
+	  goto dublicateend
+      end	  
+	 end
+	end
+	::dublicateend::
     end
    end
     if (addtype == "MILKYWAY") then
