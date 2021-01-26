@@ -28,22 +28,10 @@ if (comp.isAvailable("modem") == false or comp.modem.isWireless() == false) then
 --global variables--
  
 --send modem message--
-function send(add, chan, a, b, c)
-if (c == nil) then
- if (b == nil) then
- modem.send(add, chan, a)
- modem.send(add, chan, a)
- modem.send(add, chan, a)
- else
- modem.send(add, chan, a, b)
- modem.send(add, chan, a, b)
- modem.send(add, chan, a, b)
- end
- else
-modem.send(add, chan, a, b, c)
-modem.send(add, chan, a, b, c)
-modem.send(add, chan, a, b, c)
-end
+function send(add, chan, a, b, c, d, e, f)
+modem.send(add, chan, a, b, c, d, e, f)
+modem.send(add, chan, a, b, c, d, e, f)
+modem.send(add, chan, a, b, c, d, e, f)
 end
 --send modem message--
  
@@ -227,7 +215,7 @@ if (msg == "link") then
 else
 if (msg == "link") then
 local state, _ = gate.getGateStatus()
-send(sadd, 100, gate.getGateType(), state, gate.dialedAddress)
+send(sadd, 100, gate.getGateType(), state, gate.dialedAddress, serial.serialize(gate.stargateAddress))
 elseif (msg == "mess" and radd ~= myad) then
 messagework(msga)
 os.sleep(0.1)
