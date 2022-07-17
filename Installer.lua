@@ -40,22 +40,26 @@ end
 function download()
  print("Downloading files...")
  if type then
- shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/Tablet.lua /arud/AUD.lua -fQ")
+ shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/Tablet.lua /arud/AURD.lua -fQ")
  shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/MWAS.ff /arud/MWAS.ff -fQ")
  shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/MWDS.ff /arud/MWDS.ff -fQ")
  shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/MWGS.ff /arud/MWGS.ff -fQ")
  shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/MWG.ff /arud/MWG.ff -fQ")
+ shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/MWAS.ff /arud/PGAS.ff -fQ")
+ shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/MWDS.ff /arud/PGDS.ff -fQ")
+ shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/MWGS.ff /arud/PGGS.ff -fQ")
+ shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/MWG.ff /arud/PGG.ff -fQ")
  shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/UNG.ff /arud/UNG.ff -fQ")
  shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/GI.ff /arud/GI.ff -fQ")
  else
- shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/PC.lua /arud/AUD.lua -fQ") 
+ shell.execute("wget https://raw.githubusercontent.com/SAlexW/AunisUniversalDialer/main/PC.lua /arud/AURD.lua -fQ") 
  end
 local autorunFile = [[
 local shell = require("shell")
 
 do
 shell.setWorkingDirectory("/arud/")
-shell.execute("AUD.lua")
+shell.execute("AURD.lua")
 end
 ]]
 local file = io.open("/autorun.lua", "w")
