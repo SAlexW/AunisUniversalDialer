@@ -216,7 +216,7 @@ end
 
 function mainaddupd()
 local flag = true
-tunnel.send("getmain")
+if tun then tunnel.send("getmain") end
 local _, _, _, _, _, mess = event.pull("modem_message")
 local tadd = {}
 local mwser, pgser, unser, gatetype = tbl.unpack(decode(mess))
