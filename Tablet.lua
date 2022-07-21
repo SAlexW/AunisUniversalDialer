@@ -216,18 +216,18 @@ end
 
 function mainaddupd()
 local flag = true
-if tun then tunnel.send("getmain") end
-local _, _, _, _, _, mess = event.pull("modem_message")
-local tadd = {}
-local mwser, pgser, unser, gatetype = tbl.unpack(decode(mess))
-local mw = serial.unserialize(mwser)
-local pg = serial.unserialize(pgser)
-local un = serial.unserialize(unser)
-tadd.MILKYWAY = {tbl.unpack(mw)}
-tadd.PEGASUS = {tbl.unpack(pg)}
-tadd.UNIVERSE = {tbl.unpack(un)}
-tadd.gtype = gatetype
-tadd.AURD = true
+ tunnel.send("getmain")
+ local _, _, _, _, _, mess = event.pull("modem_message")
+ local tadd = {}
+ local mwser, pgser, unser, gatetype = tbl.unpack(decode(mess))
+ local mw = serial.unserialize(mwser)
+ local pg = serial.unserialize(pgser)
+ local un = serial.unserialize(unser)
+ tadd.MILKYWAY = {tbl.unpack(mw)}
+ tadd.PEGASUS = {tbl.unpack(pg)}
+ tadd.UNIVERSE = {tbl.unpack(un)}
+ tadd.gtype = gatetype
+ tadd.AURD = true
  for i, v in ipairs(addbook) do
  local mw, pg, un = fulladdsim(tadd, v)
  local mwf = tbl.concat(tadd.MILKYWAY) == tbl.concat(v.MILKYWAY)
@@ -1934,7 +1934,7 @@ function mainscreen()
   nearbyMDlink()
   elseif (xmain<25 and xmain>15 and ymain<23 and ymain>20) then
   term.clear()
-  addscreen(1, true)
+  addscreen(1, tun)
   elseif (xmain>53 and xmain<60 and ymain == 21 and tun and not (tostring(gatestate.itype) == "NULL" or gatestate.itype == nil)) then
   tunnel.send("iopen")
   elseif (xmain>53 and xmain<61 and ymain == 22 and tun and not (tostring(gatestate.itype) == "NULL" or gatestate.itype == nil)) then
