@@ -123,8 +123,8 @@ fopen()
 --checking address book--
 
 --add address into address book--
-function addadd(book, name, mw, pg, un, tp, aurd)
-tbl.insert(book, {["name"]=name, ["MILKYWAY"]=mw, ["PEGASUS"]=pg, ["UNIVERSE"]=un, ["gtype"]=tp, ["AURD"]=aurd})
+function addadd(book, name, mw, pg, un, tp, gdo, aurd)
+tbl.insert(book, {["name"]=name, ["MILKYWAY"]=mw, ["PEGASUS"]=pg, ["UNIVERSE"]=un, ["gtype"]=tp, ["gdo"]=gdo, ["AURD"]=aurd})
 return book
 end
 --add address into address book--
@@ -203,9 +203,9 @@ book:write(mass.name == "" and "addbook = {\n}" or "addbook = {\n")
  if mass.name ~= "" then
   for i, v in ipairs(mass) do
   if i < #mass then
-  book:write(string.format("{[\"name\"]=\"%s\",\n [\"MILKYWAY\"]={\"%s\"},\n [\"PEGASUS\"]={\"%s\"},\n [\"UNIVERSE\"]={\"%s\"},\n [\"gtype\"]=\"%s\",\n [\"AURD\"]=%s},\n\n", v.name, tbl.concat(v.MILKYWAY, "\", \""), tbl.concat(v.PEGASUS, "\", \""), tbl.concat(v.UNIVERSE, "\", \""), v.gtype, tostring(v.AURD)))
+  book:write(string.format("{[\"name\"]=\"%s\",\n [\"MILKYWAY\"]={\"%s\"},\n [\"PEGASUS\"]={\"%s\"},\n [\"UNIVERSE\"]={\"%s\"},\n [\"gtype\"]=\"%s\",\n [\"gdo\"]=\"%s\",\n [\"AURD\"]=%s},\n\n", v.name, tbl.concat(v.MILKYWAY, "\", \""), tbl.concat(v.PEGASUS, "\", \""), tbl.concat(v.UNIVERSE, "\", \""), v.gtype, tostring(v.gdo), tostring(v.AURD)))
   else
-  book:write(string.format("{[\"name\"]=\"%s\",\n [\"MILKYWAY\"]={\"%s\"},\n [\"PEGASUS\"]={\"%s\"},\n [\"UNIVERSE\"]={\"%s\"},\n [\"gtype\"]=\"%s\",\n [\"AURD\"]=%s}\n", v.name, tbl.concat(v.MILKYWAY, "\", \""), tbl.concat(v.PEGASUS, "\", \""), tbl.concat(v.UNIVERSE, "\", \""), v.gtype, tostring(v.AURD)))
+  book:write(string.format("{[\"name\"]=\"%s\",\n [\"MILKYWAY\"]={\"%s\"},\n [\"PEGASUS\"]={\"%s\"},\n [\"UNIVERSE\"]={\"%s\"},\n [\"gtype\"]=\"%s\",\n [\"gdo\"]=\"%s\",\n [\"AURD\"]=%s}\n", v.name, tbl.concat(v.MILKYWAY, "\", \""), tbl.concat(v.PEGASUS, "\", \""), tbl.concat(v.UNIVERSE, "\", \""), v.gtype, tostring(v.gdo), tostring(v.AURD)))
   end
   end
  book:write("}") 
@@ -227,6 +227,7 @@ local flag = true
  tadd.PEGASUS = {tbl.unpack(pg)}
  tadd.UNIVERSE = {tbl.unpack(un)}
  tadd.gtype = gatetype
+ tadd.gdo = ""
  tadd.AURD = true
  for i, v in ipairs(addbook) do
  local mw, pg, un = fulladdsim(tadd, v)
@@ -246,6 +247,7 @@ local flag = true
   addbook[i].PEGASUS = {tbl.unpack(tadd.PEGASUS)}
   addbook[i].UNIVERSE = {tbl.unpack(tadd.UNIVERSE)}
   addbook[i].gtype = tadd.gtype
+  addbook[i].gdo = tadd.gdo
   addbook[i].AURD = tadd.AURD
   abookupd(addbook)
   break
@@ -257,7 +259,7 @@ local flag = true
  print("Updating database.\nPlease write a name for main gate (English only. Max: 30).\nYou can change it in address book.")
  messread(30)
  if iomesage == "" then print("Name cannot be empty. Please, try again.") os.sleep(2) term.clear() goto maingatenameloop end
- addbook = addadd(addbook, iomessage, tadd.MILKYWAY, tadd.PEGASUS, tadd.UNIVERSE, tadd.gtype, tadd.AURD)
+ addbook = addadd(addbook, iomessage, tadd.MILKYWAY, tadd.PEGASUS, tadd.UNIVERSE, tadd.gtype, tadd.gdo, tadd.AURD)
  end
 term.clear()
 local timed = addsort(addbook)
@@ -300,6 +302,7 @@ if (mass[1]==mass[2]) and #mass > 1 then tbl.remove(mass, 2) end
    book[mass[1]].UNIVERSE = tadd.UNIVERSE 
    book[mass[1]].AURD = true
    book[mass[1]].gtype = tadd.gtype
+   book[mass[1]].gdo = tadd.gdo
    end
   else
   print("WARNING! Database conflict detected.")
@@ -307,11 +310,12 @@ if (mass[1]==mass[2]) and #mass > 1 then tbl.remove(mass, 2) end
   local mwadd = mw and {} or book[mass[1]].MILKYWAY
   local pgadd = pg and {} or book[mass[1]].PEGASUS
   local unadd = un and {} or book[mass[1]].UNIVERSE
-  book = addadd(book, "[UNTITLED]", mwadd, pgadd, unadd, "UNKNOWN", false)
+  book = addadd(book, "[UNTITLED]", mwadd, pgadd, unadd, "UNKNOWN", "", false)
   book[mass[1]].MILKYWAY = tadd.MILKYWAY
   book[mass[1]].PEGASUS = tadd.PEGASUS
   book[mass[1]].UNIVERSE = tadd.UNIVERSE
   book[mass[1]].AURD = true
+  book[mass[1]].gdo = tadd.gdo
   book[mass[1]].gtype = tadd.gtype
   print("Success.")
   os.sleep(1)
@@ -337,7 +341,7 @@ if (mass[1]==mass[2]) and #mass > 1 then tbl.remove(mass, 2) end
   print("Updating database.\nPlease write a name for new gate (English only. Max: 30).")
   messread(30)
   if iomesage == "" then print("Name cannot be empty. Please, try again.") os.sleep(2) term.clear() goto namegateloop end
-  book = addadd(book, iomessage, tadd.MILKYWAY == nil and {} or tadd.MILKYWAY, tadd.PEGASUS == nil and {} or tadd.PEGASUS, tadd.UNIVERSE == nil and {} or tadd.UNIVERSE, (tadd.gtype == nil or tadd.gtype == "nil") and "UNKNOWN" or tadd.gtype, tadd.AURD == nil and false or tadd.AURD)
+  book = addadd(book, iomessage, tadd.MILKYWAY == nil and {} or tadd.MILKYWAY, tadd.PEGASUS == nil and {} or tadd.PEGASUS, tadd.UNIVERSE == nil and {} or tadd.UNIVERSE, (tadd.gtype == nil or tadd.gtype == "nil") and "UNKNOWN" or tadd.gtype, (tadd.gdo == nil or tadd.gdo == "nil") and "" or tadd.gdo, tadd.AURD == nil and false or tadd.AURD)
   else
   print("WARNING! Database conflict detected.")
    if (#mw==1 or #mw==0) and (#pg==1 or #pg==0) and (#un==1 or #un==0) then
@@ -386,12 +390,13 @@ if (mass[1]==mass[2]) and #mass > 1 then tbl.remove(mass, 2) end
      book[num].UNIVERSE = tadd.UNIVERSE 
      book[num].AURD = true
      book[num].gtype = tadd.gtype
+     book[num].gdo = tadd.gdo
      else
      print("Wrong entries detected. Saving incorrect addresses to the new [UNTITLED] gate.")
      local mwadd = mwch and {} or book[mass[1]].MILKYWAY
      local pgadd = pgch and {} or book[mass[1]].PEGASUS
      local unadd = unch and {} or book[mass[1]].UNIVERSE
-     book = addadd(book, "[UNTITLED]", mwadd, pgadd, unadd, "UNKNOWN", false)
+     book = addadd(book, "[UNTITLED]", mwadd, pgadd, unadd, "UNKNOWN", "", false)
      end
      for i = 1, #mass do
       if i ~= datain then 
@@ -439,6 +444,7 @@ local addtimed = {}
  addtimed.UNIVERSE = stype == "UNIVERSE" and {tbl.unpack(addshort)} or {}
  addtimed.gtype = "UNKNOWN"
  addtimed.AURD = false
+ addtimed.gdo = ""
  else
  local mwser, pgser, unser, gatetype = tbl.unpack(decode(mess))
  local mw = serial.unserialize(mwser)
@@ -449,6 +455,7 @@ local addtimed = {}
  addtimed.UNIVERSE = {tbl.unpack(un)}
  addtimed.gtype = gatetype
  addtimed.AURD = true
+ addtimed.gdo = ""
  end
 addupd(addbook, addtimed, screen)
 end
@@ -1520,6 +1527,7 @@ ginfo.PEGASUS = addbook[gnum].PEGASUS
 ginfo.UNIVERSE = addbook[gnum].UNIVERSE
 ginfo.AURD = addbook[gnum].AURD
 ginfo.gtype = addbook[gnum].gtype
+ginfo.gdo = addbook[gnum].gdo
 local nm = ginfo.name
 gpu.set(41-math.floor(#nm/2),1,nm)
 gpu.set(22,1,"[◄]")
@@ -1564,12 +1572,19 @@ gpu.set(29,15,"[SHOW]")
  gpu.set(20,16,"[EDIT]")
  gpu.set(29,16,"[EDIT]")
  end
+gpu.set(51,20,"Latest GDO code:") 
+gpu.set(51,22,tostring(ginfo.gdo))
+gpu.set(68,19,string.format("SEND%s[NEARBY]", tun and "┬" or "─"))
+if tun then gpu.set(72,20,"└[ MAIN ]") end
+gpu.fill(51,18,30,1,"━")
+gpu.fill(51,21,30,1,"━")
+gpu.fill(51,23,30,1,"━")
+gpu.set(50,18,"┏┃┃┣┃┻",true)
 gpu.set(38, 3, string.format("Gate type: %s", ginfo.gtype))
 gpu.set(38, 4, string.format("AURD status: %s", ginfo.AURD and "CONNECTED" or "NOT CONNECTED"))
 gpu.set(1, 20,"Nearby gate: [DIAL] [ABORT] [GDO]")
  if tun then
  gpu.set(1, 21,"Main gate: [DIAL] [ABORT] [GDO]")
- 
  end
 gpu.set(73,3,"[RENAME]")
 gpu.set(73,4,"[DELETE]")
@@ -1577,6 +1592,16 @@ gpu.set(73,4,"[DELETE]")
 local _, _, xmenu, ymenu = event.pull("touch")
  if (xmenu==80 and ymenu== 1) then
  addscreen(1, false)
+ elseif (xmenu >=75 and ymenu == 19) then
+ modem.send(madd, 100, "iopensend", addbook[gnum].gdo)
+ gpu.set(1,25,"Good luck.")
+ os.sleep(1)
+ gpu.fill(1,25,10,1," ")
+ elseif (xmenu >=75 and ymenu == 20 and tun) then
+ tunnel.send("iopensend", addbook[gnum].gdo)
+ gpu.set(1,25,"Good luck.")
+ os.sleep(1)
+ gpu.fill(1,25,10,1," ")
  elseif (xmenu >=14 and xmenu <=33 and xmenu ~= 20 and xmenu ~= 28 and ymenu == 20) then
  term.clear()
  linklist = {}
@@ -1605,7 +1630,6 @@ local _, _, xmenu, ymenu = event.pull("touch")
    fulladdscreen(gnum)
    else
    pc.beep(500, 0.25)
-   gpu.set(1,1,state)
    os.sleep(2)
     if state == nil then
     term.clear()
@@ -1637,6 +1661,7 @@ local _, _, xmenu, ymenu = event.pull("touch")
     term.setCursor(1,13)
     messread(30)
     modem.send(madd, 100, "iopensend", iomessage)
+    addbook[gnum].gdo = iomessage
     gpu.set(36,14,"Good luck.")
     os.sleep(2)
     fulladdscreen(gnum)
@@ -1661,13 +1686,13 @@ local _, _, xmenu, ymenu = event.pull("touch")
   fulladdscreen(gnum)
   elseif (xmenu >=12 and xmenu <=17 and state == "idle") then
   local add = {}
-   for i, v in ipairs(addbook[gnum][msg]) do
+   for i, v in ipairs(addbook[gnum][stype]) do
    add[i]=v
    end
-  add[#add+1] = msg == "MILKYWAY" and "Point of Origin" or msg == "PEGASUS" and "Subido" or msg == "UNIVERSE" and "Glyph 17"
+  add[#add+1] = stype == "MILKYWAY" and "Point of Origin" or stype == "PEGASUS" and "Subido" or stype == "UNIVERSE" and "Glyph 17"
   os.sleep(0.2)
-  modem.send(madd, 100, "add", serial.serialize(add))
-  _, _, _, _, _, mess = event.pull("modem_message")
+  tunnel.send("add", serial.serialize(add))
+  _, _, _, _, _, mess = event.pull("modem_message", tunnel.address)
   dmsg, size = tbl.unpack(decode(mess))
    if dmsg ~= "dialing" then
    term.clear()
@@ -1676,14 +1701,15 @@ local _, _, xmenu, ymenu = event.pull("touch")
    end
   fulladdscreen(gnum)
   elseif (xmenu >=19 and xmenu <=25) then
-  modem.send(madd, 100, "abort")
+  tunnel.send("abort")
   fulladdscreen(gnum)
   elseif (xmenu >=27 and xmenu <=31 and state == "open") then
   term.clear()
   gpu.set(29,12,"Write GDO code. Max: 30.")
   term.setCursor(1,13)
   messread(30)
-  modem.send(madd, 100, "iopensend", iomessage)
+  tunnel.send("iopensend", iomessage)
+  addbook[gnum].gdo = iomessage
   gpu.set(36,14,"Good luck.")
   os.sleep(2)
   fulladdscreen(gnum)
