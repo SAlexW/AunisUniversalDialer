@@ -1830,7 +1830,7 @@ local _, _, xmain, ymain = event.pull("touch")
  elseif (xmain==80 and ymain == 22) then
  n=math.min(n+1, math.floor((#addbook-11)/2))
  addscreen(n, false)
- elseif (math.fmod(xmain, 40)<=39 and math.fmod(xmain, 40)>33 and ymain > 2 and ymain <23) then
+ elseif (math.fmod(xmain, 40)<=39 and math.fmod(xmain, 40)>33 and ymain > 2 and ymain <23 and math.floor(xmain/40)+2*(math.floor(ymain/3)-1)+2*p-1 <= #addbook) then
   if math.fmod(ymain, 3) == 0 then
   ::bookrenameloop::
   gpu.set(1,24,"Write new name (English only. Max: 30): ")
@@ -1859,7 +1859,7 @@ local _, _, xmain, ymain = event.pull("touch")
    end
   end
  goto scrollloop
- elseif (math.fmod(xmain, 40)<33 and math.fmod(xmain, 40)>0 and ymain > 2 and ymain <23 and math.fmod(ymain, 3) < 2) then
+ elseif (math.fmod(xmain, 40)<33 and math.fmod(xmain, 40)>0 and ymain > 2 and ymain <23 and math.fmod(ymain, 3) < 2 and math.floor(xmain/40)+2*(math.floor(ymain/3)-1)+2*p-1 <= #addbook) then
  fulladdscreen(math.floor(xmain/40)+2*(math.floor(ymain/3)-1)+2*p-1)
  else
  goto scrollloop
