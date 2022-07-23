@@ -212,7 +212,6 @@ end
  
 --gate abort dial / disengage gate--
 function diseng(_, myad, _, _, _, msg)
-print(myad, msg)
  if (msg == "abort") then
  disen = true
  end
@@ -243,7 +242,6 @@ end
  
 --main message work--
 function main(_, myad, sadd, chan, dist, msg, msga, radd)
-print(msg, msga, radd)
 local gate = com.stargate
 local state, _ = gate.getGateStatus()
 rec = sadd
