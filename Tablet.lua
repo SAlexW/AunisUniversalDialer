@@ -434,9 +434,9 @@ gpu.set(1,12,"The process of updating the address book has been started. Please 
  elseif mode == "modem" then
  modem.broadcast(100, "get")
  end
-local _,_,_,_,_,mess = event.pull("modem_message")
+local _,_,_,_,_,mess = event.pull(2, "modem_message")
 local addtimed = {}
- if mess == "None" then
+ if mess == "None" or mess == nil then
  local addshort = {tbl.unpack(add)}
  if (addshort[#addshort] == "Point of Origin" or addshort[#addshort] == "Glyph 17" or addshort[#addshort] == "Subido") then tbl.remove(addshort) end
  addtimed.MILKYWAY = stype == "MILKYWAY" and {tbl.unpack(addshort)} or {}
@@ -644,7 +644,7 @@ gpu.setForeground(9, true)
 for i = 1, 9 do
 local y = 0
  for line in GlyphImages.Null:gmatch("[^\r\n]+") do   
- gpu.set((math.fmod(i-1, 3)*(stype == "PEGASUS" and 16 or 15))+1, math.floor((i-1)/3)*8+y+1, line)
+ gpu.set((math.fmod(i-1, 3)*16)+1, math.floor((i-1)/3)*8+y+1, line)
  y=y+1
  end
 end
@@ -1282,19 +1282,46 @@ local _, _, x, y = event.pull("touch")
 end
 
 function customdraw(add, gtype)
-gpu.fill(1,1,46,25," ")
-gpu.fill(1,1,gtype == "mw" and 46 or gtype == "un" and 60 or gtype == "pg" and 62, 25," ")
- for i, v in ipairs(add) do
- local hglyph = 1
-  for line in GlyphImages[add[i]]:gmatch("[^\r\n]+") do
-   if gtype == "mw" or gtype == "pg" then
-   gpu.setForeground(gtype == "mw" and 4 or gtype == "pg" and 3, true)
-   gpu.set((math.fmod(i-1, 3)*(gtype == "pg" and 16 or 15))+1, math.floor((i-1)/3)*8+hglyph+1, line)
-   else
-   gpu.setForeground(0, true)
-   gpu.set((math.fmod(i-1, 9)*6)+3, 4+hglyph, line)
+ if tbl.concat(add) == "" then
+ term.clear()
+  if (gtype == "mw") then
+  mwreload()
+  elseif (gtype == "un") then
+  unreload()
+  elseif (gtype == "pg") then
+  pgreload()
+  end
+ gpu.set(68,23,"[REMOVE LAST]")
+ gpu.set(66,24,"[EXIT W/O SAVE]")
+ gpu.set(68,25,"[SAVE & EXIT]")
+ else
+  if gtype == "mw" then
+  gpu.fill((math.fmod(#add, 3)*15)+1, math.floor((#add)/3)*8+1, 15, 8, " ")
+  elseif gtype == "pg" then
+  gpu.fill((math.fmod(#add, 3)*16)+1, math.floor((#add)/3)*8+1, 15, 8, " ")
+  local fore, _ = gpu.getForeground()
+  gpu.setForeground(9, true)
+  local y = 0
+   for line in GlyphImages.Null:gmatch("[^\r\n]+") do   
+   gpu.set((math.fmod(#add, 3)*16)+1, math.floor((#add)/3)*8+y+1, line)
+   y=y+1
    end
-  hglyph=hglyph+1
+  gpu.setForeground(fore, true)
+  elseif gtype == "un" then 
+  gpu.fill((math.fmod(#add, 9)*6)+3, 5, 6, 18, " ")
+  end
+  for i, v in ipairs(add) do
+  local hglyph = 1
+   for line in GlyphImages[add[i]]:gmatch("[^\r\n]+") do
+    if gtype == "mw" or gtype == "pg" then
+    gpu.setForeground(gtype == "mw" and 4 or gtype == "pg" and 3, true)
+    gpu.set((math.fmod(i-1, 3)*(gtype == "pg" and 16 or 15))+1, math.floor((i-1)/3)*8+hglyph, line)
+    else
+    gpu.setForeground(0, true)
+    gpu.set((math.fmod(i-1, 9)*6)+3, 4+hglyph, line)
+    end
+   hglyph=hglyph+1
+   end
   end
  end
  if (gtype == "mw") then
@@ -1313,7 +1340,9 @@ gpu.fill(1,1,gtype == "mw" and 46 or gtype == "un" and 60 or gtype == "pg" and 6
     local y = math.fmod(num-1, 19)+1
     gpu.setForeground(1, true)
     gpu.setBackground(12, true)
-    gpu.set(x, y, string.format("%u%s",i,v))
+	local str = v
+    while str:len() <= 15 do str = string.format("%s ", str) end
+    gpu.set(x, y, string.format("%u%s",i,str))
     gpu.setForeground(0, true)
     gpu.setBackground(15, true)
     break
@@ -1329,17 +1358,21 @@ gpu.fill(1,1,gtype == "mw" and 46 or gtype == "un" and 60 or gtype == "pg" and 6
   gpu.set(61+math.floor(i/19)*10, math.fmod(i+math.floor(i/19), 19), str)
   end
  gpu.set(61, 19, "└─────────┴─────────")
-  for i, v in ipairs(add) do
-   for num, glyph in ipairs(unf) do
-    if glyph == v then
-    local x = math.floor(((num-1)/18))*10+61
-    local y = math.fmod(num-1, 18)+1
-    gpu.setForeground(8, true)
-    gpu.setBackground(7, true)
-    gpu.set(x, y, string.format("%u%s",i,v))
-    gpu.setForeground(0, true)
-    gpu.setBackground(15, true)
-    break
+  if tbl.concat(add) ~= "" then
+   for i, v in ipairs(add) do
+    for num, glyph in ipairs(unf) do
+     if glyph == v then
+     local x = math.floor(((num-1)/18))*10+61
+     local y = math.fmod(num-1, 18)+1
+     gpu.setForeground(8, true)
+     gpu.setBackground(7, true)
+	 local str = v
+     while str:len() <= 8 do str = string.format("%s ", str) end
+     gpu.set(x, y, string.format("%u%s",i,str))
+     gpu.setForeground(0, true)
+     gpu.setBackground(15, true)
+     break
+     end
     end
    end
   end
@@ -1352,17 +1385,21 @@ gpu.fill(1,1,gtype == "mw" and 46 or gtype == "un" and 60 or gtype == "pg" and 6
   gpu.set(63+math.floor(i/19)*9, math.fmod(i+math.floor(i/19), 19), str)
   end
  gpu.set(63, 19, "└────────┴────────")
-  for i, v in ipairs(add) do
-   for num, glyph in ipairs(pgf) do
-    if glyph == v then
-    local x = math.floor(((num-1)/18))*9+63
-    local y = math.fmod(num-1, 18)+1
-    gpu.setForeground(3, true)
-    gpu.setBackground(11, true)
-    gpu.set(x, y, string.format("%u%s",i,v))
-    gpu.setForeground(0, true)
-    gpu.setBackground(15, true)
-    break
+ if tbl.concat(add) ~= "" then
+   for i, v in ipairs(add) do
+    for num, glyph in ipairs(pgf) do
+     if glyph == v then
+     local x = math.floor(((num-1)/18))*9+63
+     local y = math.fmod(num-1, 18)+1
+     gpu.setForeground(3, true)
+     gpu.setBackground(11, true)
+     local str = v
+     while str:len() <= 7 do str = string.format("%s ", str) end
+     gpu.set(x, y, string.format("%u%s",i,str))
+     gpu.setForeground(0, true)
+     gpu.setBackground(15, true)
+     break
+     end
     end
    end
   end
@@ -1371,34 +1408,35 @@ end
 
 function customadd(gnum, gtype)
 term.clear()
-if (gtype == "mw") then
+ if (gtype == "mw") then
  mwreload()
- dofile("MWG.ff")
  elseif (gtype == "un") then
  unreload()
- dofile("UNG.ff")
  elseif (gtype == "pg") then
  pgreload()
- dofile("PGG.ff")
  end
-dofile(gtype == "mw" and "MWG.ff" or gtype == "pg" and "PGG.ff" or gtype == "un" and "UNG.ff")
 local add = {}
- for i, v in ipairs(addbook[gnum][gtype == "mw" and "MILKYWAY" or gtype == "pg" and "PEGASUS" or gtype == "un" and "UNIVERSE"]) do
- add[i]=v
+local conadd = tbl.concat(addbook[gnum][gtype == "mw" and "MILKYWAY" or gtype == "pg" and "PEGASUS" or gtype == "un" and "UNIVERSE"])
+ if conadd ~= "" then
+  for i, v in ipairs(addbook[gnum][gtype == "mw" and "MILKYWAY" or gtype == "pg" and "PEGASUS" or gtype == "un" and "UNIVERSE"]) do
+  add[i]=v
+  end
  end
- add[#add+1] = (gtype == "mw" and "Point of Origin" or gtype == "pg" and "Subido" or gtype == "un" and "Glyph 17")
- for i, v in ipairs(add) do
- local hglyph = 1
+ if tbl.concat(add) ~= "" and #add >= 6 then
+  add[#add+1] = (gtype == "mw" and "Point of Origin" or gtype == "pg" and "Subido" or gtype == "un" and "Glyph 17")
+  for i, v in ipairs(add) do
+  local hglyph = 1
    for line in GlyphImages[add[i]]:gmatch("[^\r\n]+") do
     if gtype == "mw" or gtype == "pg" then
     gpu.setForeground(gtype == "mw" and 4 or gtype == "pg" and 3, true)
-    gpu.set((math.fmod(i-1, 3)*(gtype == "pg" and 16 or 15))+1, math.floor((i-1)/3)*8+hglyph+1, line)
+    gpu.set((math.fmod(i-1, 3)*(gtype == "pg" and 16 or 15))+1, math.floor((i-1)/3)*8+hglyph, line)
     else
     gpu.setForeground(0, true)
     gpu.set((math.fmod(i-1, 9)*6)+3, 4+hglyph, line)
     end
    hglyph=hglyph+1
    end
+  end
  end
 customdraw(add, gtype)
 gpu.set(68,23,"[REMOVE LAST]")
@@ -1444,9 +1482,9 @@ local _, _, x, y = event.pull("touch")
     end
     for i, v in ipairs(add) do
     local hglyph = 1
-     for line in GlyphImages[add[i]]:gmatch("[^\r\n]+") do
+     for line in GlyphImages[v]:gmatch("[^\r\n]+") do
      gpu.setForeground(4, true)
-     gpu.set((math.fmod(i-1, 3)*15)+1, math.floor((i-1)/3)*8+hglyph+1, line)
+     gpu.set((math.fmod(i-1, 3)*15)+1, math.floor((i-1)/3)*8+hglyph, line)
      hglyph=hglyph+1
      end
     end
@@ -1472,7 +1510,7 @@ local _, _, x, y = event.pull("touch")
     end
     for i, v in ipairs(add) do
     local hglyph = 1
-     for line in GlyphImages[add[i]]:gmatch("[^\r\n]+") do
+     for line in GlyphImages[v]:gmatch("[^\r\n]+") do
      gpu.setForeground(0, true)
      gpu.set((math.fmod(i-1, 9)*6)+3, 4+hglyph, line)
      hglyph=hglyph+1
@@ -1500,9 +1538,9 @@ local _, _, x, y = event.pull("touch")
     end
     for i, v in ipairs(add) do
     local hglyph = 1
-     for line in GlyphImages[add[i]]:gmatch("[^\r\n]+") do
+     for line in GlyphImages[v]:gmatch("[^\r\n]+") do
      gpu.setForeground(3, true)
-     gpu.set((math.fmod(i-1, 3)*16)+1, math.floor((i-1)/3)*8+hglyph+1, line)
+     gpu.set((math.fmod(i-1, 3)*16)+1, math.floor((i-1)/3)*8+hglyph, line)
      hglyph=hglyph+1
      end
     end
